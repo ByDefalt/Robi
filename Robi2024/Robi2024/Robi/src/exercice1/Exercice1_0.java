@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import graphicLayer.GRect;
 import graphicLayer.GSpace;
 
+
 public class Exercice1_0 {
 	GSpace space = new GSpace("Exercice 1", new Dimension(200, 150));
 	GRect robi = new GRect();
