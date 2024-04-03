@@ -1,5 +1,6 @@
 package exercice1;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 
@@ -16,6 +17,7 @@ public class Exercice1_0 {
         this.robi = new GRect();
         this.space.addElement(robi);
         this.space.open();
+        this.robi.setColor(new Color((int) (Math.random() * 0x1000000)));
     }
 
     public void tourFenetre() {
