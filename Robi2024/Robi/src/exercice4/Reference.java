@@ -10,8 +10,12 @@ public class Reference {
 	private Map<String, Command> primitives;
 	
 	public Reference(Object receiver) {
-		this.receiver = receiver;
+		this.setReceiver(receiver);
 		this.primitives = new HashMap<>();
+	}
+	
+	public void setReceiver(Object receiver) {
+		this.receiver = receiver;
 	}
 	
 	public Object getReceiver() {

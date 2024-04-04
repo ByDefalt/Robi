@@ -45,11 +45,11 @@ public class Exercice4_1_0 {
 
 		// Initialisation des references : on leur ajoute les primitives qu'elles
 		// comprenent
-		spaceRef.addCommand("setColor", new SpaceChangeColor());
+		spaceRef.addCommand("setColor", new SetColor());
         spaceRef.addCommand("sleep", new SleepCommand());
 
-        robiRef.addCommand("setColor", new RobiChangeColor());
-        robiRef.addCommand("translate", new RobiTranslate());
+        robiRef.addCommand("setColor", new SetColor());
+        robiRef.addCommand("translate", new Translate());
 
 		// Enrigestrement des references dans l'environement par leur nom
 		environment.addReference("space", spaceRef);

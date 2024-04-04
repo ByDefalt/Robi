@@ -38,9 +38,11 @@ package exercice4;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 
+import graphicLayer.GElement;
 import graphicLayer.GImage;
 import graphicLayer.GOval;
 import graphicLayer.GRect;
@@ -51,7 +53,7 @@ import stree.parser.SParser;
 import tools.Tools;
 
 
-/*
+
 class NewElement implements Command {
 	public Reference run(Reference reference, SNode method) {
 		try {
@@ -62,14 +64,23 @@ class NewElement implements Command {
 			ref.addCommand("translate", new Translate());
 			ref.addCommand("setDim", new SetDim());
 			return ref;
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		}
-		return null;
+		} catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        return null;
 	}
 }
-*/
+
 
 public class Exercice4_2_0 {
 	// Une seule variable d'instance
@@ -86,7 +97,7 @@ public class Exercice4_2_0 {
 		Reference stringClassRef = new Reference(GString.class);
 
 		spaceRef.addCommand("setColor", new SetColor());
-		spaceRef.addCommand("sleep", new Sleep());
+		spaceRef.addCommand("sleep", new SleepCommand());
 
 		spaceRef.addCommand("add", new AddElement());
 		spaceRef.addCommand("del", new DelElement());
