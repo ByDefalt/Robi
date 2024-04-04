@@ -13,27 +13,27 @@ import stree.parser.SNode;
 import stree.parser.SParser;
 
 public class Exercice3_0 {
-    GSpace space = new GSpace("Exercice 3", new Dimension(200, 100));
-    GRect robi = new GRect();
-    String script = "" +
-            "(space setColor black) " +
-            "(robi setColor yellow)" +
-            "(space sleep 1000)" +
-            "(space setColor white)\n" +
-            "(space sleep 1000)" +
-            "(robi setColor red) \n" +
-            "(space sleep 1000)" +
-            "(robi translate 100 0)\n" +
-            "(space sleep 1000)\n" +
-            "(robi translate 0 50)\n" +
-            "(space sleep 1000)\n" +
-            "(robi translate -100 0)\n" +
-            "(space sleep 1000)\n" +
-            "(robi translate 0 -40)";
+	GSpace space = new GSpace("Exercice 3", new Dimension(200, 100));
+	GRect robi = new GRect();
+	String script = "" +
+	"   (space setColor black) " +
+	"   (robi setColor yellow)" +
+	"   (space sleep 1000)" +
+	"   (space setColor white)\n" + 
+	"   (space sleep 1000)" +
+	"	(robi setColor red) \n" + 
+	"   (space sleep 1000)" +
+	"	(robi translate 100 0)\n" + 
+	"	(space sleep 1000)\n" + 
+	"	(robi translate 0 50)\n" + 
+	"	(space sleep 1000)\n" + 
+	"	(robi translate -100 0)\n" + 
+	"	(space sleep 1000)\n" + 
+	"	(robi translate 0 -40)";
 
     public Exercice3_0() {
-        space.addElement(robi);
-        space.open();
+        this.space.addElement(this.robi);
+        this.space.open();
         this.runScript();
     }
 
@@ -91,11 +91,11 @@ public class Exercice3_0 {
     private Command getRobiCommand(String command, String[] params) {
         switch (command) {
             case "setColor":
-                return new RobiChangeColor(robi, getColorFromString(params[0]));
+                return new RobiChangeColor(this.robi, getColorFromString(params[0]));
             case "translate":
                 int x = Integer.parseInt(params[0]);
                 int y = Integer.parseInt(params[1]);
-                return new RobiTranslate(robi, x, y);
+                return new RobiTranslate(this.robi, x, y);
             default:
                 return null;
         }
@@ -133,7 +133,7 @@ public class Exercice3_0 {
 
         @Override
         public void run() {
-            space.setColor(newColor);
+            space.setColor(this.newColor);
         }
     }
 
@@ -148,7 +148,7 @@ public class Exercice3_0 {
 
         @Override
         public void run() {
-            robi.setColor(newColor);
+        	this.robi.setColor(this.newColor);
         }
     }
 
@@ -164,7 +164,7 @@ public class Exercice3_0 {
 
         @Override
         public void run() {
-            robi.translate(new Point(dx, dy));
+        	this.robi.translate(new Point(dx, dy));
         }
     }
 
@@ -178,7 +178,7 @@ public class Exercice3_0 {
         @Override
         public void run() {
             try {
-                Thread.sleep(duration);
+                Thread.sleep(this.duration);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
