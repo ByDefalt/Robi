@@ -99,8 +99,8 @@ public class Exercice4_2_0 {
 		spaceRef.addCommand("setColor", new SetColor());
 		spaceRef.addCommand("sleep", new SleepCommand());
 
-		spaceRef.addCommand("add", new AddElement());
-		spaceRef.addCommand("del", new DelElement());
+		spaceRef.addCommand("add", new AddElement(environment));
+		spaceRef.addCommand("del", new DelElement(environment));
 		
 		rectClassRef.addCommand("new", new NewElement());
 		ovalClassRef.addCommand("new", new NewElement());
