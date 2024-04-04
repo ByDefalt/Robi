@@ -14,6 +14,10 @@ public class Reference {
 		this.primitives = new HashMap<>();
 	}
 	
+	public Object getReceiver() {
+		return this.receiver;
+	}
+	
 	public Command getCommandByName(String selector) {
 		return	this.primitives.get(selector);
 	}
@@ -23,8 +27,13 @@ public class Reference {
 	}
 
 	public Reference run(SNode method) {
-		//to do
-	    return null;
+	    String methodName = method.get(1).contents();
+	    Command command = getCommandByName(methodName);
+	    if (command != null) {
+	        return command.run(this, method);
+	    } else {
+	        System.out.println("Erreur : Commande inconnue - " + methodName);
+	        return null;
+	    }
 	}
-
 }

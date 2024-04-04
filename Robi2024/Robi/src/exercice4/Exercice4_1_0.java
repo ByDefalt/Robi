@@ -14,7 +14,7 @@ package exercice4;
 //	(space sleep 1000)
 //	(robi translate -100 0)
 //	(space sleep 1000)
-//	(robi translate 0 -40) ) 
+//	(robi translate 0 -40)
 //
 
 import java.awt.Dimension;
@@ -45,9 +45,11 @@ public class Exercice4_1_0 {
 
 		// Initialisation des references : on leur ajoute les primitives qu'elles
 		// comprenent
-		//
-		// <A VOUS DE CODER>
-		//
+		spaceRef.addCommand("setColor", new SpaceChangeColor());
+        spaceRef.addCommand("sleep", new SleepCommand());
+
+        robiRef.addCommand("setColor", new RobiChangeColor());
+        robiRef.addCommand("translate", new RobiTranslate());
 
 		// Enrigestrement des references dans l'environement par leur nom
 		environment.addReference("space", spaceRef);
