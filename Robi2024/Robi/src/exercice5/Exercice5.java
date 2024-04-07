@@ -14,6 +14,7 @@ import exercice4.NewString;
 import exercice4.Reference;
 import exercice4.SetColor;
 import exercice4.SleepCommand;
+import exercice5.examples.Example1;
 import graphicLayer.GImage;
 import graphicLayer.GOval;
 import graphicLayer.GRect;
@@ -24,9 +25,9 @@ import stree.parser.SParser;
 
 public class Exercice5 {
 	Environment environment = new Environment();
-
+	String script = "(space setDim 150 120)";
     public Exercice5() {
-    	GSpace space = new GSpace("Exercice 4", new Dimension(200, 100));
+    	GSpace space = new GSpace("Exercice 5", new Dimension(800, 500));
 		space.open();
 
 		Reference spaceRef = new Reference(space);
@@ -66,5 +67,8 @@ public class Exercice5 {
             e.printStackTrace();
         }
     }
+    public static void main(String[] args) {
+        Exercice5 exo = new Exercice5();
+        exo.oneShot(exo.script);
+    }
 }
-
