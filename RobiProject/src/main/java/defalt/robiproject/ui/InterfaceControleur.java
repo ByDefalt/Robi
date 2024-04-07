@@ -13,12 +13,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.io.ByteArrayInputStream;
 
+import com.google.gson.Gson;
+
 import defalt.robiproject.algo.ClientRobi;
+import defalt.robiproject.algo.CommandeSocket;
 
 import javax.imageio.ImageIO;
 
@@ -63,10 +65,10 @@ public class InterfaceControleur extends ClientRobi{
             } catch (IOException e) {
                 labelEtatConnexion.setText("erreur de connexion");
             } catch (NumberFormatException e) {
-                showError("port non valide", AlertType.ERROR);
+                showError("port non valide");
             }
         }else{
-            showError("entree non valide", AlertType.ERROR);
+            showError("entree non valide");
         }
     }
     @FXML
@@ -78,7 +80,7 @@ public class InterfaceControleur extends ClientRobi{
                 myThread.interrupt();
                 labelEtatConnexion.setText("Déconnecté");
             } catch (IOException e) {
-                showError("erreur de Deconnexion", AlertType.ERROR);
+                showError("erreur de Deconnexion");
             }
         }
     }
@@ -88,10 +90,13 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 areaCommand.appendText(entreeCommand.getText() + "\n\n");
-                super.sendMessage(entreeCommand.getText());
+                CommandeSocket commande=new CommandeSocket("envoyer",entreeCommand.getText());
+                Gson gson = new Gson();
+                String json = gson.toJson(commande);
+                super.sendMessage(json);
                 entreeCommand.setText("");
             } catch (IOException e) {
-                showError("erreur d'envoie", AlertType.ERROR);
+                showError("erreur d'envoie");
             }
         }
     }
@@ -110,23 +115,50 @@ public class InterfaceControleur extends ClientRobi{
                 }
                 entreeCommand.setText(content.toString());
             } catch (IOException e) {
-                showError("Erreur lors de la lecture du fichier", AlertType.ERROR);
+                showError("Erreur lors de la lecture du fichier");
             }
         }
     }
     @FXML
     private void actionBoutonExecution() {
-        // Méthode associée à l'action du bouton Exécuter
+        if(IsConnected){
+            try {
+                CommandeSocket commande=(checkboxPas.isSelected() ? new CommandeSocket("executer_pas") : new CommandeSocket("executer_block"));
+                Gson gson = new Gson();
+                String json = gson.toJson(commande);
+                super.sendMessage(json);
+            } catch (IOException e) {
+                showError("erreur d'envoie");
+            }
+        }
     }
 
     @FXML
     private void actionBoutonPrecedent() {
-        // Méthode associée à l'action du bouton Précédent
+        if(IsConnected){
+            try {
+                CommandeSocket commande=new CommandeSocket("precedent");
+                Gson gson = new Gson();
+                String json = gson.toJson(commande);
+                super.sendMessage(json);
+            } catch (IOException e) {
+                showError("erreur d'envoie");
+            }
+        }
     }
 
     @FXML
     private void actionBoutonSuivant() {
-        // Méthode associée à l'action du bouton Suivant
+        if(IsConnected){
+            try {
+                CommandeSocket commande=new CommandeSocket("suivant");
+                Gson gson = new Gson();
+                String json = gson.toJson(commande);
+                super.sendMessage(json);
+            } catch (IOException e) {
+                showError("erreur d'envoie");
+            }
+        }
     }
 
     @FXML
@@ -137,13 +169,13 @@ public class InterfaceControleur extends ClientRobi{
                 super.stopSocket();
                 Platform.exit();
             } catch (IOException e) {
-                showError("Erreur lors de la fermeture des services", AlertType.ERROR);
+                showError("Erreur lors de la fermeture des services");
             }
         }
     }
 
     @Override
-    public void receiveMessage() {
+    public final void receiveMessage() {
         while (!getSocket().isClosed()) {
             try {
                 Object recv = getIn().readObject();
@@ -151,22 +183,22 @@ public class InterfaceControleur extends ClientRobi{
                     String recvString = (String) recv;
                     byte[] imageBytes = Base64.getDecoder().decode(recvString);
                     if (imageBytes.length == 0) {
-                        showError("Erreur lors de la reception du message", AlertType.ERROR);
+                        showError("Erreur lors de la reception du message");
                     } else {
                         try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
                             BufferedImage bufferedImage = ImageIO.read(bis);
 
                             if (bufferedImage == null) {
-                                showError("Erreur lors de la reception du message", AlertType.ERROR);
+                                showError("Erreur lors de la reception du message");
+                            }else{
+                                // Convertir BufferedImage en Image de JavaFX
+                                Image fxImage = convertToJavaFXImage(bufferedImage);
+
+                                // Créer un ImageView et l'ajouter à une scène
+                                Images.setImage(fxImage);
                             }
-
-                            // Convertir BufferedImage en Image de JavaFX
-                            Image fxImage = convertToJavaFXImage(bufferedImage);
-
-                            // Créer un ImageView et l'ajouter à une scène
-                            Images.setImage(fxImage);
                         } catch (IOException e) {
-                            showError("Erreur lors de la reception du message", AlertType.ERROR);
+                            showError("Erreur lors de la reception du message");
                         }
                     }
                 }
@@ -195,14 +227,10 @@ public class InterfaceControleur extends ClientRobi{
         return javafxImage;
     }
 
-    private void showError(String message, AlertType type) {
+
+    private void showError(String message) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(type);
-            if (type == AlertType.ERROR) {
-                alert.setTitle("Erreur");
-            } else {
-                alert.setTitle("Information");
-            }
+            Alert alert = new Alert(AlertType.ERROR);
             alert.setHeaderText(null);
             alert.setContentText(message);
             alert.setResizable(true);
@@ -210,7 +238,7 @@ public class InterfaceControleur extends ClientRobi{
         });
     }
 
-    public void initialize() {
+    public final void initialize() {
         areaCommand.setEditable(false);
     }
 }

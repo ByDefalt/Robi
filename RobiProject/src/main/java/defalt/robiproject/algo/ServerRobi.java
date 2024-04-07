@@ -1,4 +1,5 @@
 package defalt.robiproject.algo;
+import com.google.gson.Gson;
 import defalt.robiproject.socket.Server;
 
 import java.io.IOException;
@@ -9,38 +10,60 @@ public class ServerRobi extends Server {
     private Thread myThread;
     private boolean connection = false;
     private Socket clientSocket;
-
-
-    public boolean isConnection() {
+    private String code;
+    public final boolean isConnected() {
         return connection;
     }
 
-    public void setConnection(boolean connection) {
+    public final void setConnection(boolean connection) {
         this.connection = connection;
     }
 
-    public Thread getMyThread() {
+    public final Thread getMyThread() {
         return myThread;
     }
 
-    public void setMyThread(Thread myThread) {
+    public final void setMyThread(Thread myThread) {
         this.myThread = myThread;
     }
-    public Socket getClientSocket() {
+    public final Socket getClientSocket() {
         return clientSocket;
     }
 
-    public void setClientSocket(Socket clientSocket) {
+    public final void setClientSocket(Socket clientSocket) {
         this.clientSocket = clientSocket;
     }
     @Override
-    public void receiveMessage() throws IOException {
-        // Implémentez la logique pour recevoir et traiter les messages ici
+    public final void receiveMessage() throws IOException {
         while(true){
             if(!this.clientSocket.isClosed()){
                 this.setClientSocket(this.accept());
             }else{
-
+                try {
+                    Object recv = getIn().readObject();
+                    if (recv instanceof String) {
+                        Gson gson = new Gson();
+                        CommandeSocket commande = gson.fromJson((String) recv, CommandeSocket.class);
+                        switch (commande.getName()){
+                            case "envoyer":
+                                code= commande.getCode();
+                                break;
+                            case "executer_pas":
+                                break;
+                            case "executer_block":
+                                break;
+                            case "precedent":
+                                break;
+                            case "suivant":
+                                break;
+                            default:
+                                System.out.println("commande name undefined");
+                                break;
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
 
         }
@@ -58,7 +81,7 @@ public class ServerRobi extends Server {
             serverRobi.startSocket("localhost", Integer.parseInt("5555"));
             serverRobi.setClientSocket(serverRobi.accept());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         Thread receiveThread = new Thread(() -> {
