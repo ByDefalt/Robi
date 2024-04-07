@@ -6,6 +6,7 @@ import graphicLayer.GElement;
 import stree.parser.SNode;
 
 public class NewElement implements Command {
+	
 	public Reference run(Reference reference, SNode method) {
 		try {
 			@SuppressWarnings("unchecked")
