@@ -1,31 +1,25 @@
 package defalt.robiproject.socket;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 
 // Implémentation de l'interface pour le client
-public class Client implements socket.SocketInterface {
+public class Client extends Thread implements SocketInterface {
     private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
 
-    public void start() {
-        String serverAddress = "127.0.0.1"; // Adresse IP du serveur
-        int port = 12345; // Port sur lequel le serveur écoute
-
-        try {
-            socket = new Socket(serverAddress, port);
-            out = new PrintWriter(socket.getOutputStream(), true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public ObjectInputStream getIn() {
+        return in;
     }
 
-    public void stop() {
+    public void startSocket(String serverAddress, int port) throws IOException {
+            socket = new Socket(serverAddress, port);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+    }
+
+    public void stopSocket() {
         try {
             in.close();
             out.close();
@@ -35,16 +29,15 @@ public class Client implements socket.SocketInterface {
         }
     }
 
-    public void sendMessage(String message) {
-        out.println(message);
-    }
-
-    public String receiveMessage() {
+    public void sendMessage(Object message) {
         try {
-            return in.readLine();
+            out.writeObject(message);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
         }
+    }
+
+    public void receiveMessage(){
+
     }
 }

@@ -47,7 +47,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml" fx:controller="defalt.robiproject.ui.InterfaceControleur">
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="defalt.robiproject.ui.InterfaceControleur">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -75,7 +75,8 @@
                         <Label layoutX="15.0" layoutY="82.0" text="Port :" />
                         <TextField fx:id="entreeIp" layoutX="13.0" layoutY="40.0" prefHeight="26.0" prefWidth="110.0" />
                         <TextField fx:id="entreePort" layoutX="14.0" layoutY="107.0" prefHeight="26.0" prefWidth="109.0" />
-                      <Button layoutX="14.0" layoutY="150.0" mnemonicParsing="false" onAction="#actionBoutonConnexion" text="connexion" />
+                      <Button layoutX="14.0" layoutY="150.0" mnemonicParsing="false" onAction="#actionBoutonConnexion" text="Connexion" />
+                        <Button layoutX="15.0" layoutY="187.0" mnemonicParsing="false" onAction="#actionBoutonDeconnexion" text="Déconnexion" />
                         <Label layoutX="14.0" layoutY="327.0" text="État de connexion : " />
                         <Label fx:id="labelEtatConnexion" layoutX="15.0" layoutY="345.0" text="Non Connecté" />
                      </children>
