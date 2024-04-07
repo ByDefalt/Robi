@@ -9,7 +9,7 @@ import stree.parser.SNode;
 class Translate implements Command {
     @Override
     public Reference run(Reference receiver, SNode method) {
-    	Object objet ;
+    	Object objet;
         int dx = Integer.parseInt(method.get(2).contents());
         int dy = Integer.parseInt(method.get(3).contents());
 

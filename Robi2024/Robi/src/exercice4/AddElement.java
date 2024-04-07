@@ -1,6 +1,7 @@
 package exercice4;
 
 import graphicLayer.GElement;
+import graphicLayer.GRect;
 import graphicLayer.GSpace;
 import stree.parser.SNode;
 
@@ -12,18 +13,26 @@ public class AddElement implements Command {
     }
 
     public Reference run(Reference receiver, SNode method) {
+        GSpace space = (GSpace) receiver.getReceiver();
+        String elementClassName = method.get(3).get(0).contents();
+        
+        Reference refElementClass = this.environment.getReferenceByName(elementClassName);
         try {
-            Reference RefElement = environment.getReferenceByName(method.get(2).get(0).contents());          
-            if (RefElement != null) {
-                GSpace space = (GSpace) receiver.getReceiver();
-                space.addElement((GElement) RefElement.getReceiver());
-                return receiver;
-            } else {
-                System.out.println("Element introuvable");
-            }
+            NewElement newElementCommand = (NewElement) refElementClass.getCommandByName("new");
+            Reference newElementReference = newElementCommand.run(refElementClass, method);
+            
+            GElement element = (GElement) newElementReference.getReceiver();
+            this.environment.addReference(method.get(2).contents(), newElementReference);
+            space.addElement(element);
+            return receiver;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         return null;
     }
 }
+
+
+
+

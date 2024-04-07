@@ -38,11 +38,9 @@ package exercice4;
 
 import java.awt.Dimension;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.List;
 
-import graphicLayer.GElement;
 import graphicLayer.GImage;
 import graphicLayer.GOval;
 import graphicLayer.GRect;
@@ -51,35 +49,6 @@ import graphicLayer.GString;
 import stree.parser.SNode;
 import stree.parser.SParser;
 import tools.Tools;
-
-
-
-class NewElement implements Command {
-	public Reference run(Reference reference, SNode method) {
-		try {
-			@SuppressWarnings("unchecked")
-			GElement e = ((Class<GElement>) reference.getReceiver()).getDeclaredConstructor().newInstance();
-			Reference ref = new Reference(e);
-			ref.addCommand("setColor", new SetColor());
-			ref.addCommand("translate", new Translate());
-			ref.addCommand("setDim", new SetDim());
-			return ref;
-		} catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        }
-        return null;
-	}
-}
 
 
 public class Exercice4_2_0 {
