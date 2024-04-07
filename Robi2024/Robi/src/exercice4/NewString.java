@@ -7,14 +7,12 @@ public class NewString implements Command {
 
     @Override
     public Reference run(Reference receiver, SNode expr) {
-        StringBuilder textBuilder = new StringBuilder();
-        for (int i = 2; i < expr.size(); i++) {
-            textBuilder.append(expr.get(i).contents());
-            if (i < expr.size() - 1) {
-                textBuilder.append(" ");
-            }
+        for(int i = 0; i < expr.size(); i++) {
+        	for(int j = 0; j < expr.get(i).children().size(); j++) {
+        		System.out.println("i: " + i + ", j: " + j + ", contentss: " + expr.get(i).children().get(j).contents());
+        	}
         }
-        String text = textBuilder.toString();
+        String text = expr.get(3).children().get(2).contents().replace("\"", "");
         
         Reference ref = null;
         try {
