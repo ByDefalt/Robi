@@ -13,6 +13,7 @@ import exercice4.NewImage;
 import exercice4.NewString;
 import exercice4.Reference;
 import exercice4.SetColor;
+import exercice4.SetDim;
 import exercice4.SleepCommand;
 import exercice5.examples.Example1;
 import graphicLayer.GImage;
@@ -42,6 +43,8 @@ public class Exercice5 {
 		spaceRef.addCommand("add", new AddElement(environment));
 		spaceRef.addCommand("del", new DelElement(environment));
 		
+		spaceRef.addCommand("setDim", new SetDim());
+
 		rectClassRef.addCommand("new", new NewElement());
 		ovalClassRef.addCommand("new", new NewElement());
 		imageClassRef.addCommand("new", new NewImage());
