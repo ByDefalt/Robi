@@ -14,30 +14,22 @@ public class Client extends Thread implements SocketInterface {
     }
 
     public void startSocket(String serverAddress, int port) throws IOException {
-            socket = new Socket(serverAddress, port);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
+        socket = new Socket(serverAddress, port);
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
     }
 
-    public void stopSocket() {
-        try {
-            in.close();
-            out.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void stopSocket() throws IOException {
+        in.close();
+        out.close();
+        socket.close();
     }
 
-    public void sendMessage(Object message) {
-        try {
-            out.writeObject(message);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void sendMessage(Object message) throws IOException {
+        out.writeObject(message);
     }
 
-    public void receiveMessage(){
+    public void receiveMessage() throws IOException{
 
     }
 }

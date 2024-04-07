@@ -103,7 +103,7 @@
             </VBox>
             <VBox prefHeight="374.0" prefWidth="241.0">
                <children>
-                  <SplitPane dividerPositions="0.29828326180257514" orientation="VERTICAL" prefHeight="378.0" prefWidth="242.0" VBox.vgrow="ALWAYS">
+                  <SplitPane dividerPositions="0.39032258064516123" orientation="VERTICAL" prefHeight="378.0" prefWidth="242.0" VBox.vgrow="ALWAYS">
                      <items>
                         <AnchorPane>
                            <children>
@@ -113,7 +113,11 @@
                               <Button layoutX="113.0" layoutY="59.0" mnemonicParsing="false" onAction="#actionBoutonSuivant" text="Suivant" />
                            </children>
                         </AnchorPane>
-                        <ImageView fx:id="Images" fitHeight="224.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <ImageView fx:id="Images" fitHeight="224.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </AnchorPane>
                      </items>
                   </SplitPane>
                </children>

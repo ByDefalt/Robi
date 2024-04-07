@@ -70,19 +70,26 @@ public class InterfaceControleur extends ClientRobi{
     @FXML
     private void actionBoutonDeconnexion() {
         if(IsConnected){
-            myThread.interrupt();
-            IsConnected=false;
-            super.stopSocket();
-            Platform.exit();
+            try {
+                myThread.interrupt();
+                IsConnected=false;
+                super.stopSocket();
+            } catch (IOException e) {
+                showError("erreur de Deconnexion", Alert.AlertType.ERROR);
+            }
         }
     }
 
     @FXML
     private void actionBoutonEnvoyer() {
         if(IsConnected){
-            areaCommand.appendText(entreeCommand.getText() + "\n\n");
-            super.sendMessage(entreeCommand.getText());
-            entreeCommand.setText("");
+            try {
+                areaCommand.appendText(entreeCommand.getText() + "\n\n");
+                super.sendMessage(entreeCommand.getText());
+                entreeCommand.setText("");
+            } catch (IOException e) {
+                showError("erreur d'envoie", Alert.AlertType.ERROR);
+            }
         }
     }
 
@@ -122,11 +129,14 @@ public class InterfaceControleur extends ClientRobi{
     @FXML
     private void actionBoutonQuit() {
         if(IsConnected) {
-            myThread.interrupt();
-            IsConnected = false;
-            super.stopSocket();
+            try {myThread.interrupt();
+                IsConnected = false;
+                super.stopSocket();
+                Platform.exit();
+            } catch (IOException e) {
+                showError("Erreur lors de la fermeture des services", Alert.AlertType.ERROR);
+            }
         }
-        Platform.exit();
     }
 
     @Override
@@ -138,14 +148,13 @@ public class InterfaceControleur extends ClientRobi{
                     String recvString = (String) recv;
                     byte[] imageBytes = Base64.getDecoder().decode(recvString);
                     if (imageBytes.length == 0) {
-                        System.out.println("La chaîne Base64 est vide.");
+                        showError("Erreur lors de la reception du message", Alert.AlertType.ERROR);
                     } else {
                         try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
                             BufferedImage bufferedImage = ImageIO.read(bis);
 
                             if (bufferedImage == null) {
-                                System.out.println("La chaîne Base64 ne représente pas une image valide.");
-                                return;
+                                showError("Erreur lors de la reception du message", Alert.AlertType.ERROR);
                             }
 
                             // Convertir BufferedImage en Image de JavaFX
@@ -154,12 +163,12 @@ public class InterfaceControleur extends ClientRobi{
                             // Créer un ImageView et l'ajouter à une scène
                             Images.setImage(fxImage);
                         } catch (IOException e) {
-                            System.out.println("Une erreur s'est produite lors de la lecture de l'image : " + e.getMessage());
+                            showError("Erreur lors de la reception du message", Alert.AlertType.ERROR);
                         }
                     }
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                showError("fermeture du serveur", Alert.AlertType.ERROR);
             }
         }
     }
