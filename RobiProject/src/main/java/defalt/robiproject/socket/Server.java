@@ -18,9 +18,13 @@ public  class Server implements SocketInterface{
     @Override
     public void startSocket(String serverAddress, int port) throws IOException {
         ServerSocket = new ServerSocket(port);
+    }
+    public Socket accept() throws IOException {
         Socket clientSocket = this.ServerSocket.accept();
         out = new ObjectOutputStream(clientSocket.getOutputStream());
         in = new ObjectInputStream(clientSocket.getInputStream());
+        System.out.println(clientSocket.toString());
+        return clientSocket;
     }
 
     @Override

@@ -6,15 +6,18 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.stage.FileChooser;
+import javafx.scene.control.Alert.AlertType;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.io.ByteArrayInputStream;
+
 import defalt.robiproject.algo.ClientRobi;
 
 import javax.imageio.ImageIO;
@@ -30,8 +33,6 @@ public class InterfaceControleur extends ClientRobi{
     @FXML
     private Label labelEtatConnexion;
 
-    @FXML
-    private Button boutonConnexion;
 
     @FXML
     private TextArea areaCommand;
@@ -48,6 +49,7 @@ public class InterfaceControleur extends ClientRobi{
     private boolean IsConnected=false;
 
     private Thread myThread;
+
     @FXML
     private void actionBoutonConnexion() {
         if(entreeIp.getText()!=null && !entreeIp.getText().isEmpty() && entreePort.getText()!=null && !entreePort.getText().isEmpty()){
@@ -55,27 +57,28 @@ public class InterfaceControleur extends ClientRobi{
                 super.startSocket(entreeIp.getText(),Integer.parseInt(entreePort.getText()));
                 Thread receiveThread=new Thread(this::receiveMessage);
                 myThread=receiveThread;
-                receiveThread.start();
                 IsConnected=true;
+                receiveThread.start();
                 labelEtatConnexion.setText("Connecté");
             } catch (IOException e) {
                 labelEtatConnexion.setText("erreur de connexion");
             } catch (NumberFormatException e) {
-                showError("port non valide", Alert.AlertType.ERROR);
+                showError("port non valide", AlertType.ERROR);
             }
         }else{
-            showError("entree non valide", Alert.AlertType.ERROR);
+            showError("entree non valide", AlertType.ERROR);
         }
     }
     @FXML
     private void actionBoutonDeconnexion() {
         if(IsConnected){
             try {
-                myThread.interrupt();
                 IsConnected=false;
                 super.stopSocket();
+                myThread.interrupt();
+                labelEtatConnexion.setText("Déconnecté");
             } catch (IOException e) {
-                showError("erreur de Deconnexion", Alert.AlertType.ERROR);
+                showError("erreur de Deconnexion", AlertType.ERROR);
             }
         }
     }
@@ -88,7 +91,7 @@ public class InterfaceControleur extends ClientRobi{
                 super.sendMessage(entreeCommand.getText());
                 entreeCommand.setText("");
             } catch (IOException e) {
-                showError("erreur d'envoie", Alert.AlertType.ERROR);
+                showError("erreur d'envoie", AlertType.ERROR);
             }
         }
     }
@@ -107,7 +110,7 @@ public class InterfaceControleur extends ClientRobi{
                 }
                 entreeCommand.setText(content.toString());
             } catch (IOException e) {
-                showError("Erreur lors de la lecture du fichier", Alert.AlertType.ERROR);
+                showError("Erreur lors de la lecture du fichier", AlertType.ERROR);
             }
         }
     }
@@ -134,27 +137,27 @@ public class InterfaceControleur extends ClientRobi{
                 super.stopSocket();
                 Platform.exit();
             } catch (IOException e) {
-                showError("Erreur lors de la fermeture des services", Alert.AlertType.ERROR);
+                showError("Erreur lors de la fermeture des services", AlertType.ERROR);
             }
         }
     }
 
     @Override
     public void receiveMessage() {
-        while (true) {
+        while (!getSocket().isClosed()) {
             try {
                 Object recv = getIn().readObject();
                 if (recv instanceof String) {
                     String recvString = (String) recv;
                     byte[] imageBytes = Base64.getDecoder().decode(recvString);
                     if (imageBytes.length == 0) {
-                        showError("Erreur lors de la reception du message", Alert.AlertType.ERROR);
+                        showError("Erreur lors de la reception du message", AlertType.ERROR);
                     } else {
                         try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
                             BufferedImage bufferedImage = ImageIO.read(bis);
 
                             if (bufferedImage == null) {
-                                showError("Erreur lors de la reception du message", Alert.AlertType.ERROR);
+                                showError("Erreur lors de la reception du message", AlertType.ERROR);
                             }
 
                             // Convertir BufferedImage en Image de JavaFX
@@ -163,12 +166,15 @@ public class InterfaceControleur extends ClientRobi{
                             // Créer un ImageView et l'ajouter à une scène
                             Images.setImage(fxImage);
                         } catch (IOException e) {
-                            showError("Erreur lors de la reception du message", Alert.AlertType.ERROR);
+                            showError("Erreur lors de la reception du message", AlertType.ERROR);
                         }
                     }
                 }
-            } catch (Exception e) {
-                showError("fermeture du serveur", Alert.AlertType.ERROR);
+            }catch (ClassNotFoundException | IOException e) {
+                if(!getSocket().isClosed()) {
+                    // Gérer ClassNotFoundException
+                    System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
+                }
             }
         }
     }
@@ -189,18 +195,21 @@ public class InterfaceControleur extends ClientRobi{
         return javafxImage;
     }
 
-    private void showError(String message, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        if (type == Alert.AlertType.ERROR) {
-            alert.setTitle("Erreur");
-        } else {
-            alert.setTitle("Information");
-        }
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.setResizable(true);
-        alert.showAndWait();
+    private void showError(String message, AlertType type) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            if (type == AlertType.ERROR) {
+                alert.setTitle("Erreur");
+            } else {
+                alert.setTitle("Information");
+            }
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.setResizable(true);
+            alert.showAndWait();
+        });
     }
+
     public void initialize() {
         areaCommand.setEditable(false);
     }

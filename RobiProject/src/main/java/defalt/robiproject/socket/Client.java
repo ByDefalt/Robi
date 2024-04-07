@@ -9,6 +9,10 @@ public class Client extends Thread implements SocketInterface {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+    public Socket getSocket(){
+        return socket;
+    }
+
     public ObjectInputStream getIn() {
         return in;
     }
