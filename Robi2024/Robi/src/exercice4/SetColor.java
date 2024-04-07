@@ -7,7 +7,7 @@ import graphicLayer.GRect;
 import graphicLayer.GSpace;
 import stree.parser.SNode;
 
-class SetColor implements Command {
+public class SetColor implements Command {
 
     private Color getColorFromString(String colorStr) {
         switch (colorStr) {
