@@ -66,6 +66,7 @@ public class Exercice4_2_0 {
 		Reference stringClassRef = new Reference(GString.class);
 
 		spaceRef.addCommand("setColor", new SetColor());
+		spaceRef.addCommand("setDim", new SetDim());
 		spaceRef.addCommand("sleep", new SleepCommand());
 
 		spaceRef.addCommand("add", new AddElement(environment));
