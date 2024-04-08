@@ -96,14 +96,13 @@ public class InterfaceControleur extends ClientRobi{
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
-
-// Créer l'objet CommandeSocket
+                // Créer l'objet CommandeSocket
                 CommandeSocket commande = new CommandeSocket("envoyer", entreeCommand.getText());
 
-// Convertir l'objet CommandeSocket en JSON en utilisant Gson avec l'adaptateur de type personnalisé
+                // Convertir l'objet CommandeSocket en JSON en utilisant Gson avec l'adaptateur de type personnalisé
                 String json = gson.toJson(commande);
 
-// Envoyer le JSON
+                // Envoyer le JSON
                 super.sendMessage(json);
                 entreeCommand.setText("");
             } catch (IOException e) {

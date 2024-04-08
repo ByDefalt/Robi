@@ -1,5 +1,6 @@
 package defalt.robiproject.algo;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import defalt.robiproject.graphicLayer.*;
 import defalt.robiproject.parser.SNode;
 import defalt.robiproject.parser.SParser;
@@ -77,14 +78,20 @@ public class ServerRobi extends Server {
     @Override
     public final void receiveMessage() throws IOException {
         while(true){
-            if(!this.clientSocket.isClosed()){
+            if(this.clientSocket.isClosed()){
                 this.setClientSocket(this.accept());
             }else{
                 try {
                     Object recv = getIn().readObject();
                     if (recv instanceof String) {
-                        Gson gson = new Gson();
+                        // Créer l'instance Gson en utilisant un GsonBuilder
+                        Gson gson = new GsonBuilder()
+                                .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
+                                .create();
+
+                        // Désérialiser le JSON en un objet CommandeSocket en utilisant Gson avec l'adaptateur de type personnalisé
                         CommandeSocket commande = gson.fromJson((String) recv, CommandeSocket.class);
+
                         switch (commande.getName()){
                             case "envoyer":
                                 code= commande.getCode();

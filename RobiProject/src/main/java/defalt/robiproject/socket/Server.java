@@ -12,7 +12,7 @@ public  class Server implements SocketInterface{
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public ObjectInputStream getIn() {
+    public final ObjectInputStream getIn() {
         return in;
     }
     @Override
