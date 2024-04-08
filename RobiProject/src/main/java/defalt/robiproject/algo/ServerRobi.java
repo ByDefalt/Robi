@@ -135,6 +135,7 @@ public class ServerRobi extends Server {
                             case "precedent":
                                 if(position>1){
                                     space.clear();
+                                    space.changeWindowSize(new Dimension(800,500));
                                     itor = compiled.iterator();
                                     position--;
                                     System.out.println(position);
