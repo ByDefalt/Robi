@@ -6,7 +6,7 @@ import graphicLayer.GElement;
 import graphicLayer.GRect;
 import stree.parser.SNode;
 
-class Translate implements Command {
+public class Translate implements Command {
     @Override
     public Reference run(Reference receiver, SNode method) {
     	Object objet;

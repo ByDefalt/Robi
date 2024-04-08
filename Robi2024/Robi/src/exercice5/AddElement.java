@@ -20,6 +20,7 @@ public class AddElement implements Command {
 
     public Reference run(Reference receiver, SNode method) {
         GSpace space = (GSpace) receiver.getReceiver();
+
         String containerName = method.get(2).contents();
         String elementType = method.get(3).get(0).contents();
 
@@ -35,6 +36,9 @@ public class AddElement implements Command {
                 if (containerReference != null && containerReference.getReceiver() instanceof GContainer) {
                     GContainer container = (GContainer) containerReference.getReceiver();
                     container.addElement(element);
+                    return receiver;
+                } else {
+                    space.addElement(element);
                     return receiver;
                 }
             }
@@ -64,4 +68,3 @@ public class AddElement implements Command {
         }
     }
 }
-
