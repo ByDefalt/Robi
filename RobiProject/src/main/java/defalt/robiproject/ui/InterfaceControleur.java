@@ -1,6 +1,8 @@
 
 package defalt.robiproject.ui;
 
+import com.google.gson.GsonBuilder;
+import defalt.robiproject.algo.CommandeSocketTypeAdapter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -90,9 +92,18 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 areaCommand.appendText(entreeCommand.getText() + "\n\n");
-                CommandeSocket commande=new CommandeSocket("envoyer",entreeCommand.getText());
-                Gson gson = new Gson();
+                // Créer l'instance Gson en utilisant un GsonBuilder
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
+                        .create();
+
+// Créer l'objet CommandeSocket
+                CommandeSocket commande = new CommandeSocket("envoyer", entreeCommand.getText());
+
+// Convertir l'objet CommandeSocket en JSON en utilisant Gson avec l'adaptateur de type personnalisé
                 String json = gson.toJson(commande);
+
+// Envoyer le JSON
                 super.sendMessage(json);
                 entreeCommand.setText("");
             } catch (IOException e) {

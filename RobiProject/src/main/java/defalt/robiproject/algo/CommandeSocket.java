@@ -1,8 +1,8 @@
 package defalt.robiproject.algo;
 
 public class CommandeSocket {
-    private String name;
-    private String code;
+    public String name;
+    public String code;
     public  CommandeSocket(String name,String code){
         this.name=name;
         this.code=code;
