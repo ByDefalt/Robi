@@ -7,7 +7,6 @@ import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
 
 import javax.imageio.ImageIO;
-import javax.swing.plaf.PanelUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +26,9 @@ public class ServerRobi extends Server {
     private SParser<SNode> parser = new SParser<>();
     private List<SNode> compiled;
     private GSpace space;
-    Environment environment = new Environment();
+    private Environment environment = new Environment();
+    private Iterator<SNode> itor;
+    private int position=0;
 
     public final boolean isConnected() {
         return connection;
@@ -104,9 +105,15 @@ public class ServerRobi extends Server {
                                 compiled = parser.parse(code);
                                 break;
                             case "executer_pas":
+                                itor = compiled.iterator();
+                                if (itor.hasNext()) {
+                                    new Interpreter().compute(environment, itor.next());
+                                    position=1;
+                                }
+                                System.out.println(position);
                                 break;
                             case "executer_block":
-                                Iterator<SNode> itor = compiled.iterator();
+                                itor = compiled.iterator();
                                 while (itor.hasNext()) {
                                     new Interpreter().compute(environment, itor.next());
                                 }
@@ -126,13 +133,30 @@ public class ServerRobi extends Server {
                                 }
                                 break;
                             case "precedent":
+                                if(position>1){
+                                    space.clear();
+                                    itor = compiled.iterator();
+                                    position--;
+                                    System.out.println(position);
+                                    for(int i=1;i<=position;i++){
+                                        if (itor.hasNext()) {
+                                            new Interpreter().compute(environment, itor.next());
+                                        }
+                                    }
+                                }
                                 break;
                             case "suivant":
+                                if (itor.hasNext()) {
+                                    new Interpreter().compute(environment, itor.next());
+                                    position++;
+                                }
+                                System.out.println(position);
                                 break;
                             default:
                                 System.out.println("commande name undefined");
                                 break;
                         }
+
                     }
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();

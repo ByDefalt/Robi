@@ -11,7 +11,7 @@ public class MainInterfaceUtilisateur extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("interface.fxml"));
         primaryStage.setTitle("FXML Example");
-        primaryStage.setScene(new Scene(root, 700, 425));
+        primaryStage.setScene(new Scene(root, 900, 425));
         primaryStage.show();
     }
 
