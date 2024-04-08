@@ -159,8 +159,11 @@ public class ServerRobi extends Server {
                         }
 
                     }
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println(this.clientSocket);
+                    if(!this.clientSocket.isClosed()){
+                        System.out.println("l");
+                    }
                 }
             }
 

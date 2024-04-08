@@ -25,9 +25,9 @@ public class Client extends Thread implements SocketInterface {
     }
     @Override
     public void stopSocket() throws IOException {
+        socket.close();
         in.close();
         out.close();
-        socket.close();
     }
     @Override
     public void sendMessage(Object message) throws IOException {

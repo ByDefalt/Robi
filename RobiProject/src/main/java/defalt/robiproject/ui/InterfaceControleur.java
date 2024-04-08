@@ -228,6 +228,7 @@ public class InterfaceControleur extends ClientRobi{
 
     // Fonction de conversion BufferedImage en Image de JavaFX
     private Image convertToJavaFXImage(BufferedImage bufferedImage) {
+        SwingFXUtils.toFXImage(bufferedImage, null);
         int width = bufferedImage.getWidth();
         int height = bufferedImage.getHeight();
         WritableImage javafxImage = new WritableImage(width, height);
@@ -242,7 +243,6 @@ public class InterfaceControleur extends ClientRobi{
         return javafxImage;
     }
 
-
     private void showError(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.ERROR);
@@ -251,6 +251,15 @@ public class InterfaceControleur extends ClientRobi{
             alert.setResizable(true);
             alert.showAndWait();
         });
+    }
+    public void stopThreadAndConnection() {
+            try {
+                super.stopSocket();
+                myThread.interrupt();
+                IsConnected = false;
+            } catch (IOException e) {
+                showError("Erreur lors de la fermeture de la connexion");
+            }
     }
 
     public final void initialize() {
