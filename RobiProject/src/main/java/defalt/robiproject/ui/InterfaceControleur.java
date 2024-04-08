@@ -134,7 +134,9 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 CommandeSocket commande=(checkboxPas.isSelected() ? new CommandeSocket("executer_pas") : new CommandeSocket("executer_block"));
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
+                        .create();
                 String json = gson.toJson(commande);
                 super.sendMessage(json);
             } catch (IOException e) {
@@ -148,7 +150,9 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 CommandeSocket commande=new CommandeSocket("precedent");
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
+                        .create();
                 String json = gson.toJson(commande);
                 super.sendMessage(json);
             } catch (IOException e) {
@@ -162,7 +166,9 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 CommandeSocket commande=new CommandeSocket("suivant");
-                Gson gson = new Gson();
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
+                        .create();
                 String json = gson.toJson(commande);
                 super.sendMessage(json);
             } catch (IOException e) {

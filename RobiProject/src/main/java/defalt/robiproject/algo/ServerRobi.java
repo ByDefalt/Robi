@@ -48,6 +48,7 @@ public class ServerRobi extends Server {
 
     public ServerRobi(){
         GSpace space = new GSpace("Exercice 5", new Dimension(800, 500));
+        space.open();
 
         Reference spaceRef = new Reference(space);
         Reference rectClassRef = new Reference(GRect.class);
