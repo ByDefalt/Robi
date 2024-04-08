@@ -6,9 +6,14 @@ import defalt.robiproject.parser.SNode;
 import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
 
+import javax.imageio.ImageIO;
+import javax.swing.plaf.PanelUI;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,8 +26,9 @@ public class ServerRobi extends Server {
 
     private SParser<SNode> parser = new SParser<>();
     private List<SNode> compiled;
-
+    private GSpace space;
     Environment environment = new Environment();
+
     public final boolean isConnected() {
         return connection;
     }
@@ -47,8 +53,7 @@ public class ServerRobi extends Server {
     }
 
     public ServerRobi(){
-        GSpace space = new GSpace("Exercice 5", new Dimension(800, 500));
-        space.open();
+        space = new GSpace("Exercice 5", new Dimension(800, 500));
 
         Reference spaceRef = new Reference(space);
         Reference rectClassRef = new Reference(GRect.class);
@@ -105,6 +110,22 @@ public class ServerRobi extends Server {
                                 while (itor.hasNext()) {
                                     new Interpreter().compute(environment, itor.next());
                                 }
+                                BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                Graphics2D g2d = image.createGraphics();
+                                space.paint(g2d);
+                                g2d.dispose();
+                                String base64Image = null;
+                                try {
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    ImageIO.write(image, "png", baos);
+                                    byte[] imageBytes = baos.toByteArray();
+                                    base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                    super.sendMessage(base64Image);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
                                 break;
                             case "precedent":
                                 break;
@@ -152,4 +173,7 @@ public class ServerRobi extends Server {
     }
 
 
+    public GSpace getSpace() {
+        return space;
+    }
 }
