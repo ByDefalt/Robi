@@ -4,6 +4,7 @@ package defalt.robiproject.ui;
 import com.google.gson.GsonBuilder;
 import defalt.robiproject.algo.CommandeSocketTypeAdapter;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
@@ -207,8 +208,8 @@ public class InterfaceControleur extends ClientRobi{
                                 showError("Erreur lors de la reception du message");
                             }else{
                                 // Convertir BufferedImage en Image de JavaFX
-                                Image fxImage = convertToJavaFXImage(bufferedImage);
-
+                                Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);;
+                                Images.setImage(null);
                                 // Créer un ImageView et l'ajouter à une scène
                                 Images.setImage(fxImage);
                             }
@@ -224,23 +225,6 @@ public class InterfaceControleur extends ClientRobi{
                 }
             }
         }
-    }
-
-    // Fonction de conversion BufferedImage en Image de JavaFX
-    private Image convertToJavaFXImage(BufferedImage bufferedImage) {
-        SwingFXUtils.toFXImage(bufferedImage, null);
-        int width = bufferedImage.getWidth();
-        int height = bufferedImage.getHeight();
-        WritableImage javafxImage = new WritableImage(width, height);
-        PixelWriter pixelWriter = javafxImage.getPixelWriter();
-        int[] pixelData = bufferedImage.getRGB(0, 0, width, height, null, 0, width);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(4 * width * height);
-        for (int argb : pixelData) {
-            byteBuffer.putInt(argb);
-        }
-        byteBuffer.flip();
-        pixelWriter.setPixels(0, 0, width, height, PixelFormat.getByteBgraInstance(), byteBuffer, width * 4);
-        return javafxImage;
     }
 
     private void showError(String message) {
