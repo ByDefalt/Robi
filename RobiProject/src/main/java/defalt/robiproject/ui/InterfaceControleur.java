@@ -12,13 +12,9 @@ import javafx.stage.FileChooser;
 import javafx.scene.control.Alert.AlertType;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.io.*;
+import java.net.SocketException;
 import java.util.Base64;
-import java.io.ByteArrayInputStream;
 
 import com.google.gson.Gson;
 
@@ -80,7 +76,6 @@ public class InterfaceControleur extends ClientRobi{
             try {
                 IsConnected=false;
                 super.stopSocket();
-                myThread.interrupt();
                 labelEtatConnexion.setText("Déconnecté");
             } catch (IOException e) {
                 showError("erreur de Deconnexion");
@@ -195,34 +190,47 @@ public class InterfaceControleur extends ClientRobi{
         while (!getSocket().isClosed()) {
             try {
                 Object recv = getIn().readObject();
-                if (recv instanceof String) {
-                    String recvString = (String) recv;
-                    byte[] imageBytes = Base64.getDecoder().decode(recvString);
-                    if (imageBytes.length == 0) {
-                        showError("Erreur lors de la reception du message");
-                    } else {
-                        try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
-                            BufferedImage bufferedImage = ImageIO.read(bis);
-
-                            if (bufferedImage == null) {
-                                showError("Erreur lors de la reception du message");
-                            }else{
-                                // Convertir BufferedImage en Image de JavaFX
-                                Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);;
-                                Images.setImage(null);
-                                // Créer un ImageView et l'ajouter à une scène
-                                Images.setImage(fxImage);
-                            }
-                        } catch (IOException e) {
+                if (recv != null) {
+                    if (recv instanceof String) {
+                        String recvString = (String) recv;
+                        byte[] imageBytes = Base64.getDecoder().decode(recvString);
+                        if (imageBytes.length == 0) {
                             showError("Erreur lors de la reception du message");
+                        } else {
+                            try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
+                                BufferedImage bufferedImage = ImageIO.read(bis);
+
+                                if (bufferedImage == null) {
+                                    showError("Erreur lors de la reception du message");
+                                } else {
+                                    // Convertir BufferedImage en Image de JavaFX
+                                    Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                                    Images.setImage(null);
+                                    // Créer un ImageView et l'ajouter à une scène
+                                    Images.setImage(fxImage);
+                                }
+                            } catch (IOException e) {
+                                showError("Erreur lors de la reception du message");
+                            }
                         }
                     }
                 }
-            }catch (ClassNotFoundException | IOException e) {
-                if(!getSocket().isClosed()) {
-                    // Gérer ClassNotFoundException
-                    System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
-                }
+            }catch (EOFException e) {
+                // Cette exception est levée lorsque le serveur ferme la connexion
+                System.out.println("Le serveur a fermé la connexion.");
+                // Traiter la fermeture de la connexion du serveur
+            } catch (SocketException e) {
+                // Cette exception est levée lorsqu'une erreur se produit sur la connexion (par exemple, le client se déconnecte)
+                System.out.println("Une erreur de connexion s'est produite : " + e.getMessage());
+                // Traiter la fermeture de la connexion du client
+            } catch (IOException e) {
+                // Cette exception est levée pour d'autres erreurs d'entrée/sortie
+                System.out.println("Une erreur d'entrée/sortie s'est produite : " + e.getMessage());
+                // Traiter l'erreur d'entrée/sortie
+            } catch (ClassNotFoundException e) {
+                // Cette exception est levée si la classe de l'objet reçu n'a pas été trouvée
+                System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
+                // Traiter l'erreur de classe non trouvée
             }
         }
     }
@@ -236,7 +244,7 @@ public class InterfaceControleur extends ClientRobi{
             alert.showAndWait();
         });
     }
-    public void stopThreadAndConnection() {
+    public final void stopThreadAndConnection() {
             try {
                 super.stopSocket();
                 myThread.interrupt();
