@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import exercice4.DelElement;
 import exercice4.Environment;
 import exercice4.Interpreter;
 import exercice4.NewImage;
@@ -54,6 +53,19 @@ public class Exercice5 {
             "(space.robi translate 20 10)\n" +
             "(space.robi add im (image.class new alien.gif))\n" +
             "(space.robi.im translate 20 20)";
+	
+	String script2 = "(space add robi (Rect new))\n"
+			+ "(space.robi setDim 50 50)\n"
+			+ "(space.robi add robi (Rect new))\n"
+			+ "(space.robi.robi setColor red)\n"
+			+ "(space.robi setColor white)";
+	
+	String script2Del = "(space add robi (rect.class new))\n"
+			+ "(space.robi setDim 50 50)\n"
+			+ "(space.robi add robi (rect.class new))\n"
+			+ "(space.robi.robi setColor red)\n"
+			+ "(space.robi setColor white)"
+			+ "(space del robi)";
 
 
     public Exercice5() {
@@ -91,7 +103,7 @@ public class Exercice5 {
         SParser<SNode> parser = new SParser<>();
         List<SNode> compiled;
         try {
-            compiled = parser.parse(script);
+            compiled = parser.parse(script2);
             Iterator<SNode> itor = compiled.iterator();
             while (itor.hasNext()) {
                 new Interpreter().compute(environment, itor.next());
