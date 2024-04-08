@@ -47,7 +47,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="defalt.robiproject.ui.InterfaceControleur">
+<VBox prefHeight="400.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="defalt.robiproject.ui.InterfaceControleur">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -65,7 +65,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.23057644110275685, 0.7067669172932329" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.23057644110275685, 0.7067669172932329, 0.5" VBox.vgrow="ALWAYS">
          <items>
             <VBox prefHeight="374.0" prefWidth="135.0">
                <children>
@@ -119,6 +119,34 @@
                            </children>
                         </AnchorPane>
                      </items>
+                  </SplitPane>
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="374.0" prefWidth="187.0">
+                    <items>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="29.0" prefWidth="186.0">
+                                 <children>
+                                    <Label layoutX="2.0" layoutY="5.0" text="Environement :" />
+                                 </children>
+                              </AnchorPane>
+                              <TextArea prefHeight="154.0" prefWidth="186.0" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                 <children>
+                                    <Label text="SNode :" />
+                                 </children>
+                              </AnchorPane>
+                              <TextArea />
+                           </children>
+                        </VBox>
+                    </items>
                   </SplitPane>
                </children>
             </VBox>
