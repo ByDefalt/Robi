@@ -2,13 +2,11 @@ package exercice5;
 
 import exercice4.Command;
 import exercice4.Environment;
-import exercice4.NewElement;
 import exercice4.NewImage;
 import exercice4.NewString;
 import exercice4.Reference;
 import graphicLayer.GContainer;
 import graphicLayer.GElement;
-import graphicLayer.GSpace;
 import stree.parser.SNode;
 
 public class AddElement implements Command {
@@ -19,9 +17,10 @@ public class AddElement implements Command {
     }
 
     public Reference run(Reference receiver, SNode method) {
-        GSpace space = (GSpace) receiver.getReceiver();
+        GContainer container = (GContainer) receiver.getReceiver();
 
-        String containerName = method.get(2).contents();
+        String elementName = method.get(2).contents();
+        String containerNameAll = method.get(0).contents() + "." + elementName;
         String elementType = method.get(3).get(0).contents();
 
         Reference refElementClass = this.environment.getReferenceByName(elementType);
@@ -31,16 +30,10 @@ public class AddElement implements Command {
             if (newElementCommand != null) {
                 Reference newElementReference = newElementCommand.run(refElementClass, method);
                 GElement element = (GElement) newElementReference.getReceiver();
-
-                Reference containerReference = this.environment.getReferenceByName(containerName);
-                if (containerReference != null && containerReference.getReceiver() instanceof GContainer) {
-                    GContainer container = (GContainer) containerReference.getReceiver();
-                    container.addElement(element);
-                    return receiver;
-                } else {
-                    space.addElement(element);
-                    return receiver;
-                }
+                
+                this.environment.addReference(containerNameAll, newElementReference);
+				container.addElement(element);
+                return receiver;
             }
         } catch (Exception e) {
             e.printStackTrace();

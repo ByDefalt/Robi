@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-//import exercice4.AddElement;
 import exercice4.DelElement;
 import exercice4.Environment;
 import exercice4.Interpreter;
-import exercice4.NewElement;
 import exercice4.NewImage;
 import exercice4.NewString;
 import exercice4.Reference;
@@ -17,7 +15,6 @@ import exercice4.SetColor;
 import exercice4.SetDim;
 import exercice4.Translate;
 import exercice4.SleepCommand;
-import exercice5.examples.Example1;
 import graphicLayer.GImage;
 import graphicLayer.GOval;
 import graphicLayer.GRect;
@@ -52,7 +49,7 @@ public class Exercice5 {
 	Environment environment = new Environment();
 	String script = "(space setDim 150 120)\n" +
             "(space add robi (rect.class new))\n" +
-            "(space.robi setColor black)\n" +
+            "(space.robi setColor white)\n" +
             "(space.robi setDim 100 100)\n" +
             "(space.robi translate 20 10)\n" +
             "(space.robi add im (image.class new alien.gif))\n" +
@@ -76,10 +73,10 @@ public class Exercice5 {
 		spaceRef.addCommand("del", new DelElement(environment));
 		
 		spaceRef.addCommand("setDim", new SetDim());
-		//spaceRef.addCommand("translate", new Translate());
+		spaceRef.addCommand("translate", new Translate());
 		
-		rectClassRef.addCommand("new", new NewElement());
-		ovalClassRef.addCommand("new", new NewElement());
+		rectClassRef.addCommand("new", new NewElement(environment));
+		ovalClassRef.addCommand("new", new NewElement(environment));
 		imageClassRef.addCommand("new", new NewImage());
 		stringClassRef.addCommand("new", new NewString());
 
@@ -88,8 +85,6 @@ public class Exercice5 {
 		environment.addReference("oval.class", ovalClassRef);
 		environment.addReference("image.class", imageClassRef);
 		environment.addReference("label.class", stringClassRef);
-		environment.addReference("space.robi", spaceRef);
-		environment.addReference("space.robi.im", spaceRef);
     }
 
     public void oneShot(String script) {
