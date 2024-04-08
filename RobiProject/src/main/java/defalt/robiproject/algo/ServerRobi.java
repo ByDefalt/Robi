@@ -1,9 +1,11 @@
 package defalt.robiproject.algo;
 import com.google.gson.Gson;
+import defalt.robiproject.graphicLayer.*;
 import defalt.robiproject.parser.SNode;
 import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Iterator;
@@ -41,6 +43,36 @@ public class ServerRobi extends Server {
 
     public final void setClientSocket(Socket clientSocket) {
         this.clientSocket = clientSocket;
+    }
+
+    public ServerRobi(){
+        GSpace space = new GSpace("Exercice 5", new Dimension(800, 500));
+
+        Reference spaceRef = new Reference(space);
+        Reference rectClassRef = new Reference(GRect.class);
+        Reference ovalClassRef = new Reference(GOval.class);
+        Reference imageClassRef = new Reference(GImage.class);
+        Reference stringClassRef = new Reference(GString.class);
+
+        spaceRef.addCommand("setColor", new SetColor());
+        spaceRef.addCommand("sleep", new SleepCommand());
+
+        spaceRef.addCommand("add", new AddElement(environment));
+        spaceRef.addCommand("del", new DelElement(environment));
+
+        spaceRef.addCommand("setDim", new SetDim());
+        spaceRef.addCommand("translate", new Translate());
+
+        rectClassRef.addCommand("new", new NewElement(environment));
+        ovalClassRef.addCommand("new", new NewElement(environment));
+        imageClassRef.addCommand("new", new NewImage());
+        stringClassRef.addCommand("new", new NewString());
+
+        environment.addReference("space", spaceRef);
+        environment.addReference("rect.class", rectClassRef);
+        environment.addReference("oval.class", ovalClassRef);
+        environment.addReference("image.class", imageClassRef);
+        environment.addReference("label.class", stringClassRef);
     }
     @Override
     public final void receiveMessage() throws IOException {
