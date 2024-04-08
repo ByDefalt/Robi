@@ -1,9 +1,13 @@
 package defalt.robiproject.algo;
 import com.google.gson.Gson;
+import defalt.robiproject.parser.SNode;
+import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Iterator;
+import java.util.List;
 
 public class ServerRobi extends Server {
 
@@ -11,6 +15,11 @@ public class ServerRobi extends Server {
     private boolean connection = false;
     private Socket clientSocket;
     private String code;
+
+    private SParser<SNode> parser = new SParser<>();
+    private List<SNode> compiled;
+
+    Environment environment = new Environment();
     public final boolean isConnected() {
         return connection;
     }
@@ -47,10 +56,15 @@ public class ServerRobi extends Server {
                         switch (commande.getName()){
                             case "envoyer":
                                 code= commande.getCode();
+                                compiled = parser.parse(code);
                                 break;
                             case "executer_pas":
                                 break;
                             case "executer_block":
+                                Iterator<SNode> itor = compiled.iterator();
+                                while (itor.hasNext()) {
+                                    new Interpreter().compute(environment, itor.next());
+                                }
                                 break;
                             case "precedent":
                                 break;
