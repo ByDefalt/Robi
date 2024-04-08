@@ -189,7 +189,6 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
-
     @Override
     public final void receiveMessage() {
         while (!getSocket().isClosed()) {
