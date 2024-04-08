@@ -122,34 +122,30 @@
                   </SplitPane>
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0">
-               <children>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="374.0" prefWidth="187.0">
-                    <items>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+            <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="374.0" prefWidth="187.0" SplitPane.resizableWithParent="false">
+              <items>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="29.0" prefWidth="186.0">
                            <children>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="29.0" prefWidth="186.0">
-                                 <children>
-                                    <Label layoutX="2.0" layoutY="5.0" text="Environement :" />
-                                 </children>
-                              </AnchorPane>
-                              <TextArea prefHeight="154.0" prefWidth="186.0" />
+                              <Label layoutX="2.0" layoutY="5.0" text="Environement :" />
                            </children>
-                        </VBox>
-                        <VBox prefHeight="200.0" prefWidth="100.0">
+                        </AnchorPane>
+                        <TextArea prefHeight="154.0" prefWidth="186.0" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="54.0" prefWidth="187.0" VBox.vgrow="NEVER">
                            <children>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
-                                 <children>
-                                    <Label text="SNode :" />
-                                 </children>
-                              </AnchorPane>
-                              <TextArea />
+                              <Label layoutY="3.0" text="SNode :" />
                            </children>
-                        </VBox>
-                    </items>
-                  </SplitPane>
-               </children>
-            </VBox>
+                        </AnchorPane>
+                        <TextArea VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+              </items>
+            </SplitPane>
          </items>
       </SplitPane>
   </children>
