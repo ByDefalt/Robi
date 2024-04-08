@@ -25,7 +25,8 @@ public class AddElement implements Command {
             if (newElementCommand != null) {
                 Reference newElementReference = newElementCommand.run(refElementClass, method);
                 GElement element = (GElement) newElementReference.getReceiver();
-                
+
+                this.environment.addReference(elementName, newElementReference);
                 this.environment.addReference(containerNameAll, newElementReference);
 				container.addElement(element);
                 return receiver;
