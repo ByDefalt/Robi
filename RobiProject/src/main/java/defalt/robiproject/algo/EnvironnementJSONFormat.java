@@ -53,7 +53,6 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
 
     public void add(String name) {
         String[] split = name.split("\\.");
-
         if (split.length >= 2) {
             System.out.println(Arrays.toString(split));
             searchandadd(split[split.length - 2], split[split.length - 1]);
