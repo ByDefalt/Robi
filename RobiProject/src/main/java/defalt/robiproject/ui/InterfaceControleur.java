@@ -161,7 +161,6 @@ public class InterfaceControleur extends ClientRobi{
                         .create();
                 String json = gson.toJson(commande);
                 areaSNode.clear();
-                areaEnvironment.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -178,8 +177,6 @@ public class InterfaceControleur extends ClientRobi{
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
                 String json = gson.toJson(commande);
-                areaSNode.clear();
-                areaEnvironment.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
