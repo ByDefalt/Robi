@@ -7,6 +7,7 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat> {
@@ -52,13 +53,15 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
 
     public void add(String name) {
         String[] split = name.split("\\.");
+
         if (split.length >= 2) {
+            System.out.println(Arrays.toString(split));
             searchandadd(split[split.length - 2], split[split.length - 1]);
         }
     }
 
     public void searchandadd(String nameparent, String namechildren) {
-        if (namechildren.equals(nameparent)) {
+        if (this.name.equals(nameparent)) {
             this.addChildren(namechildren);
         }
         for (EnvironnementJSONFormat s : children) {
