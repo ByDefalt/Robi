@@ -160,7 +160,6 @@ public class InterfaceControleur extends ClientRobi{
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
                 String json = gson.toJson(commande);
-                areaSNode.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
