@@ -31,6 +31,7 @@ public class GSpace extends JPanel implements GContainer, KeyListener, MouseList
 		super.addKeyListener(this);
 		super.addMouseListener(this);
 		this.setPreferredSize(dim);
+		super.setSize(dim);
 	}
 
 	public List<GElement> contents() {
