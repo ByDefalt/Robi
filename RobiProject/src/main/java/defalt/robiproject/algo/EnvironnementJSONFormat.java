@@ -2,6 +2,7 @@ package defalt.robiproject.algo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EnvironnementJSONFormat {
 
@@ -28,15 +29,24 @@ public class EnvironnementJSONFormat {
     public EnvironnementJSONFormat(String name){
         this.name=name;
     }
+
+    @Override
+    public String toString() {
+        return "EnvironnementJSONFormat{" +
+                "name='" + name + '\'' +
+                ", children=" + children +
+                '}';
+    }
+
     public void addChildren(String nameofchildren){
         this.children.add(new EnvironnementJSONFormat(nameofchildren));
     }
     public void search(String name){
-        String[] split=name.split(".");
-        //searchandadd(split[split.length-2],split[split.length-1]);
+        String[] split=name.split("\\.");
+        searchandadd(split[split.length-2],split[split.length-1]);
     }
     public void searchandadd(String nameparent,String namechildren){
-        if(this.name==nameparent){
+        if(Objects.equals(this.name, nameparent)){
             this.addChildren(namechildren);
         }
         for(EnvironnementJSONFormat s : children){
@@ -46,6 +56,6 @@ public class EnvironnementJSONFormat {
     public static void main(String[] args) {
         EnvironnementJSONFormat space=new EnvironnementJSONFormat("space");
         space.search("space.robi");
-        space.getChildren().toString();
+        System.out.println(space);
     }
 }
