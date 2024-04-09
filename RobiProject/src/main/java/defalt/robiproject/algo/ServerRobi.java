@@ -57,7 +57,7 @@ public class ServerRobi extends Server {
 
     public ServerRobi(){
         space = new GSpace("Exercice 5", new Dimension(800, 500));
-        space.open();
+        //space.open();
         Reference spaceRef = new Reference(space);
         Reference rectClassRef = new Reference(GRect.class);
         Reference ovalClassRef = new Reference(GOval.class);
@@ -113,8 +113,9 @@ public class ServerRobi extends Server {
                                         itor = compiled.iterator();
                                         if (itor.hasNext()) {
                                             Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                            super.sendMessage(reponse);
                                             position = 1;
+                                            super.sendMessage(position);
+                                            super.sendMessage(reponse);
                                         }
                                         image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
                                         g2d = image.createGraphics();
@@ -161,6 +162,7 @@ public class ServerRobi extends Server {
                                             for (int i = 1; i <= position; i++) {
                                                 if (itor.hasNext()) {
                                                     Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                                    super.sendMessage(position);
                                                     super.sendMessage(reponse);
                                                 }
                                             }
@@ -184,8 +186,9 @@ public class ServerRobi extends Server {
                                         if(position!=0) {
                                             if (itor.hasNext()) {
                                                 Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                                super.sendMessage(reponse);
                                                 position++;
+                                                super.sendMessage(position);
+                                                super.sendMessage(reponse);
                                             }
                                             image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
                                             g2d = image.createGraphics();

@@ -60,6 +60,8 @@ public class InterfaceControleur extends ClientRobi{
 
     private Thread myThread;
 
+    private int possition=0;
+
     @FXML
     private void actionBoutonConnexion() {
         if(entreeIp.getText()!=null && !entreeIp.getText().isEmpty() && entreePort.getText()!=null && !entreePort.getText().isEmpty()){
@@ -138,6 +140,7 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 CommandeSocket commande=(checkboxPas.isSelected() ? new CommandeSocket("executer_pas") : new CommandeSocket("executer_block"));
+                possition=(checkboxPas.isSelected() ? 1 : 0);
                 Gson gson = new GsonBuilder()
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
@@ -160,7 +163,7 @@ public class InterfaceControleur extends ClientRobi{
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
                 String json = gson.toJson(commande);
-                areaSNode.clear();
+                if(possition>1){areaSNode.clear();}
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -227,6 +230,9 @@ public class InterfaceControleur extends ClientRobi{
                     }
                     if (recv instanceof Reponse) {
                         this.setEnvironmentsSNodes((Reponse) recv);
+                    }
+                    if (recv instanceof Integer){
+                        possition = (Integer) recv;
                     }
                 }
             } catch (EOFException e) {
