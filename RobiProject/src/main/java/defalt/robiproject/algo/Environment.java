@@ -21,4 +21,8 @@ public class Environment {
 	public Map<String, Reference> getVariables() {
 		return this.variables;
 	}
+
+	public void removeReference(String name) {
+		this.variables.remove(name);
+	}
 }
