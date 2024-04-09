@@ -30,6 +30,10 @@ public class SNodeJSONFormat {
     public void addChildren(String name){
         this.children.add(new SNodeJSONFormat(name));
     }
+    public String nameformat(){
+        String a[]=this.commandname.split(".");
+        return a[a.length-1];
+    }
 
 
 }
