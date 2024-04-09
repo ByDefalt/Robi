@@ -41,7 +41,7 @@ public class EnvironnementJSONFormat {
     public void addChildren(String nameofchildren){
         this.children.add(new EnvironnementJSONFormat(nameofchildren));
     }
-    public void search(String name){
+    public void add(String name){
         String[] split=name.split("\\.");
         searchandadd(split[split.length-2],split[split.length-1]);
     }
@@ -55,7 +55,10 @@ public class EnvironnementJSONFormat {
     }
     public static void main(String[] args) {
         EnvironnementJSONFormat space=new EnvironnementJSONFormat("space");
-        space.search("space.robi");
+        space.add("space.robi");
+        space.add("space.ibor");
+        space.add("space.robi.jsp1");
+        space.add("space.jsp1.jsp2");
         System.out.println(space);
     }
 }
