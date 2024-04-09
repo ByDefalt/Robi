@@ -1,8 +1,8 @@
 package defalt.robiproject.ui;
 
 import com.google.gson.GsonBuilder;
-import defalt.robiproject.algo.CommandeSocketTypeAdapter;
-import defalt.robiproject.algo.Reponse;
+import com.google.gson.JsonSyntaxException;
+import defalt.robiproject.algo.*;
 import defalt.robiproject.parser.SNode;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -22,9 +22,6 @@ import java.util.List;
 
 
 import com.google.gson.Gson;
-
-import defalt.robiproject.algo.ClientRobi;
-import defalt.robiproject.algo.CommandeSocket;
 
 import javax.imageio.ImageIO;
 
@@ -146,7 +143,6 @@ public class InterfaceControleur extends ClientRobi{
                         .create();
                 String json = gson.toJson(commande);
                 areaSNode.clear();
-                areaEnvironment.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -207,6 +203,14 @@ public class InterfaceControleur extends ClientRobi{
                 if (recv != null) {
                     if (recv instanceof String) {
                         String recvString = (String) recv;
+                        String json = recvString;
+                        Gson gson = new GsonBuilder()
+                                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormat())
+                                .create();
+
+                        // Conversion du JSON en objet EnvironnementJSONFormat
+                        EnvironnementJSONFormat[] environnement = gson.fromJson(json, EnvironnementJSONFormat[].class);
+                        TreeConstruct(environnement);
                         byte[] imageBytes = Base64.getDecoder().decode(recvString);
                         if (imageBytes.length == 0) {
                             showError("Erreur lors de la reception du message");
@@ -227,15 +231,17 @@ public class InterfaceControleur extends ClientRobi{
                                 showError("Erreur lors de la reception du message");
                             }
                         }
+
                     }
-                    if (recv instanceof Reponse) {
-                        this.setEnvironmentsSNodes((Reponse) recv);
-                    }
-                    if (recv instanceof Integer){
+                    if (recv instanceof Integer) {
                         possition = (Integer) recv;
                     }
                 }
-            } catch (EOFException e) {
+            } catch (IllegalArgumentException e) {
+
+            }catch (JsonSyntaxException e){
+
+        }catch (EOFException e) {
                 // Cette exception est levée lorsque le serveur ferme la connexion
                 Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion server");});
                 // Traiter la fermeture de la connexion du serveur
@@ -255,14 +261,6 @@ public class InterfaceControleur extends ClientRobi{
         }
     }
 
-    private void setEnvironmentsSNodes(Reponse reponse) {
-        this.areaEnvironment.clear();
-        for(String text : reponse.getEnvironment()) {
-            this.areaEnvironment.appendText(text + "\n");
-        }
-
-        areaSNode.appendText(reponse.getSNode());
-    }
 
             
     private void showError(String message) {
@@ -274,6 +272,26 @@ public class InterfaceControleur extends ClientRobi{
             alert.showAndWait();
         });
     }
+    public void TreeConstruct(EnvironnementJSONFormat[] environnement){
+        TreeItem<String> rootItem = new TreeItem<>("Root");
+        for(EnvironnementJSONFormat env : environnement){
+            TreeItem<String> newItem = new TreeItem<>(env.getName());
+            rootItem.getChildren().add(newItem);
+            TreeAddChildren(env,newItem);
+        }
+        Platform.runLater(()->{
+            treeenvironement.setRoot(rootItem);
+        });
+    }
+
+    public void TreeAddChildren(EnvironnementJSONFormat environement,TreeItem<String> Item){
+        for(EnvironnementJSONFormat env :environement.getChildren()){
+            TreeItem<String> newItem = new TreeItem<>(env.getName());
+            Item.getChildren().add(newItem);
+            TreeAddChildren(env,newItem);
+        }
+    }
+
     public final void stopThreadAndConnection() {
             try {
                 super.stopSocket();
@@ -286,7 +304,6 @@ public class InterfaceControleur extends ClientRobi{
 
     public final void initialize() {
         areaCommand.setEditable(false);
-        areaEnvironment.setEditable(false);
         areaSNode.setEditable(false);
     }
 }

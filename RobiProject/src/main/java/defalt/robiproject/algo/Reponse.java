@@ -16,6 +16,7 @@ public class Reponse implements Serializable {
 
         for(int i = 0; i < snode.size(); i++) {
             this.snode += snode.get(i).contents() + " ";
+            //System.out.println(snode.get(i).contents());
         }
         this.snode += "\n";
     }

@@ -14,8 +14,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Base64;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
 public class ServerRobi extends Server {
@@ -31,6 +30,10 @@ public class ServerRobi extends Server {
     private Environment environment = new Environment();
     private Iterator<SNode> itor;
     private int position=0;
+
+    private EnvironnementJSONFormat spacejson;
+
+    private List<EnvironnementJSONFormat> listenv=new ArrayList<>();
 
     public final boolean isConnected() {
         return connection;
@@ -83,6 +86,12 @@ public class ServerRobi extends Server {
         environment.addReference("oval.class", ovalClassRef);
         environment.addReference("image.class", imageClassRef);
         environment.addReference("label.class", stringClassRef);
+        spacejson=new EnvironnementJSONFormat("space");
+        listenv.add(spacejson);
+        listenv.add(new EnvironnementJSONFormat("rect.class"));
+        listenv.add(new EnvironnementJSONFormat("oval.class"));
+        listenv.add(new EnvironnementJSONFormat("image.class"));
+        listenv.add(new EnvironnementJSONFormat("label.class"));
     }
     @Override
     public final void receiveMessage() throws IOException {
@@ -114,8 +123,7 @@ public class ServerRobi extends Server {
                                         if (itor.hasNext()) {
                                             Reponse reponse = new Interpreter().compute(environment, itor.next());
                                             position = 1;
-                                            super.sendMessage(position);
-                                            super.sendMessage(reponse);
+                                            super.sendMessage(position);super.sendMessage(reponse);
                                         }
                                         image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
                                         g2d = image.createGraphics();
@@ -136,8 +144,20 @@ public class ServerRobi extends Server {
                                         itor = compiled.iterator();
                                         while (itor.hasNext()) {
                                             Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                            super.sendMessage(reponse);
+
                                         }
+                                        for (Map.Entry<String, Reference> m : environment.getVariables().entrySet()) {
+                                            if(!m.getKey().equals("space") && !m.getKey().equals("rect.class") && !m.getKey().equals("oval.class") && !m.getKey().equals("image.class") && !m.getKey().equals("label.class")){
+                                                System.out.println(m.getKey());
+                                                spacejson.add(m.getKey());
+                                            }
+                                        }
+                                        System.out.println(listenv);
+                                        gson = new GsonBuilder()
+                                                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormat())
+                                                .create();
+                                        String json = gson.toJson(listenv);
+                                        super.sendMessage(json);
                                         image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
                                         g2d = image.createGraphics();
                                         space.paint(g2d);
