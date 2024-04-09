@@ -51,10 +51,10 @@ public class InterfaceControleur extends ClientRobi{
     private ImageView Images;
 
     @FXML
-    public TextArea areaEnvironment;
+    private TextArea areaEnvironment;
 
     @FXML
-    public TextArea areaSNode;
+    private TextArea areaSNode;
 
     private boolean IsConnected=false;
 

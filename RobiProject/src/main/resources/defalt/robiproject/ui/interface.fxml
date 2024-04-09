@@ -131,7 +131,7 @@
                               <Label layoutX="2.0" layoutY="5.0" text="Environement :" />
                            </children>
                         </AnchorPane>
-                        <TextArea fx:id="entreeEnvironment" prefHeight="154.0" prefWidth="186.0" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="areaEnvironment" prefHeight="154.0" prefWidth="186.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0">
@@ -141,7 +141,7 @@
                               <Label layoutY="3.0" text="SNode :" />
                            </children>
                         </AnchorPane>
-                        <TextArea fx:id="entreeSNode" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="areaSNode" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
               </items>
