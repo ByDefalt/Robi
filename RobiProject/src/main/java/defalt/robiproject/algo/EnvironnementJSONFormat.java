@@ -32,10 +32,14 @@ public class EnvironnementJSONFormat {
 
     @Override
     public String toString() {
+<<<<<<< Updated upstream
         return "EnvironnementJSONFormat{" +
                 "name='" + name + '\'' +
                 ", children=" + children +
                 '}';
+=======
+        return "EnvironnementJSONFormat{ name=" + name + " + children=" + children + '}';
+>>>>>>> Stashed changes
     }
 
     public void addChildren(String nameofchildren){
@@ -61,4 +65,8 @@ public class EnvironnementJSONFormat {
         space.add("space.jsp1.jsp2");
         System.out.println(space);
     }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

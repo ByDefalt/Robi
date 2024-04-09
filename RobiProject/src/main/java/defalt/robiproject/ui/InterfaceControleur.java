@@ -51,7 +51,7 @@ public class InterfaceControleur extends ClientRobi{
     private ImageView Images;
 
     @FXML
-    private TextArea areaEnvironment;
+    private TreeView treeenvironement;
 
     @FXML
     private TextArea areaSNode;
