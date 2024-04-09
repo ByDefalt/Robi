@@ -178,23 +178,25 @@ public class ServerRobi extends Server {
                                         }
                                         break;
                                     case "suivant":
-                                        if (itor.hasNext()) {
-                                            new Interpreter().compute(environment, itor.next());
-                                            position++;
-                                        }
-                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                        g2d = image.createGraphics();
-                                        space.paint(g2d);
-                                        g2d.dispose();
-                                        base64Image = null;
-                                        try {
-                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                            ImageIO.write(image, "png", baos);
-                                            byte[] imageBytes = baos.toByteArray();
-                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                            super.sendMessage(base64Image);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
+                                        if(position!=0) {
+                                            if (itor.hasNext()) {
+                                                new Interpreter().compute(environment, itor.next());
+                                                position++;
+                                            }
+                                            image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                            g2d = image.createGraphics();
+                                            space.paint(g2d);
+                                            g2d.dispose();
+                                            base64Image = null;
+                                            try {
+                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                                ImageIO.write(image, "png", baos);
+                                                byte[] imageBytes = baos.toByteArray();
+                                                base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                                super.sendMessage(base64Image);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
                                         break;
                                     default:
