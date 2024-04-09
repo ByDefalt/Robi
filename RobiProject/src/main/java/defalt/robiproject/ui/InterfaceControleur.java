@@ -1,8 +1,9 @@
-
 package defalt.robiproject.ui;
 
 import com.google.gson.GsonBuilder;
 import defalt.robiproject.algo.CommandeSocketTypeAdapter;
+import defalt.robiproject.algo.Reponse;
+import defalt.robiproject.parser.SNode;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -16,6 +17,10 @@ import java.io.*;
 import java.net.SocketException;
 import java.util.Base64;
 
+import java.io.ByteArrayInputStream;
+import java.util.List;
+
+
 import com.google.gson.Gson;
 
 import defalt.robiproject.algo.ClientRobi;
@@ -24,7 +29,6 @@ import defalt.robiproject.algo.CommandeSocket;
 import javax.imageio.ImageIO;
 
 public class InterfaceControleur extends ClientRobi{
-
     @FXML
     private TextField entreeIp;
 
@@ -33,7 +37,6 @@ public class InterfaceControleur extends ClientRobi{
 
     @FXML
     private Label labelEtatConnexion;
-
 
     @FXML
     private TextArea areaCommand;
@@ -46,6 +49,12 @@ public class InterfaceControleur extends ClientRobi{
 
     @FXML
     private ImageView Images;
+
+    @FXML
+    public TextArea entreeEnvironment;
+
+    @FXML
+    public TextArea entreeSNode;
 
     private boolean IsConnected=false;
 
@@ -213,8 +222,10 @@ public class InterfaceControleur extends ClientRobi{
                             }
                         }
                     }
-                }
-            }catch (EOFException e) {
+                  if(recv instanceof Reponse) {
+                    this.setEnvironmentsSNodes((Reponse) recv);
+                  }
+            } catch (EOFException e) {
                 // Cette exception est levée lorsque le serveur ferme la connexion
                 Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion server");});
                 // Traiter la fermeture de la connexion du serveur
@@ -234,6 +245,16 @@ public class InterfaceControleur extends ClientRobi{
         }
     }
 
+    private void setEnvironmentsSNodes(Reponse reponse) {
+        this.entreeEnvironment.clear();
+        for(String text : reponse.getEnvironment()) {
+            this.entreeEnvironment.appendText(text + "\n");
+        }
+
+        entreeSNode.appendText(reponse.getSNode());
+    }
+
+            
     private void showError(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.ERROR);

@@ -112,7 +112,8 @@ public class ServerRobi extends Server {
                                     case "executer_pas":
                                         itor = compiled.iterator();
                                         if (itor.hasNext()) {
-                                            new Interpreter().compute(environment, itor.next());
+                                            Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                            super.sendMessage(reponse);
                                             position = 1;
                                         }
                                         image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -133,7 +134,8 @@ public class ServerRobi extends Server {
                                     case "executer_block":
                                         itor = compiled.iterator();
                                         while (itor.hasNext()) {
-                                            new Interpreter().compute(environment, itor.next());
+                                            Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                            super.sendMessage(reponse);
                                         }
                                         image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
                                         g2d = image.createGraphics();
@@ -158,7 +160,8 @@ public class ServerRobi extends Server {
                                             position--;
                                             for (int i = 1; i <= position; i++) {
                                                 if (itor.hasNext()) {
-                                                    new Interpreter().compute(environment, itor.next());
+                                                    Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                                    super.sendMessage(reponse);
                                                 }
                                             }
                                             image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -180,7 +183,8 @@ public class ServerRobi extends Server {
                                     case "suivant":
                                         if(position!=0) {
                                             if (itor.hasNext()) {
-                                                new Interpreter().compute(environment, itor.next());
+                                                Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                                super.sendMessage(reponse);
                                                 position++;
                                             }
                                             image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
