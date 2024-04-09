@@ -1,7 +1,5 @@
 package defalt.robiproject.algo;
 
-<<<<<<< Updated upstream
-=======
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -9,22 +7,17 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
->>>>>>> Stashed changes
 import java.util.List;
 
 public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat> {
 
     private String name;
 
-<<<<<<< Updated upstream
-    private List<EnvironnementJSONFormat> children;
-=======
     private List<EnvironnementJSONFormat> children = new ArrayList<>();
 
     public EnvironnementJSONFormat() {
 
     }
->>>>>>> Stashed changes
 
 
     public String getName() {
@@ -46,21 +39,6 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
     public EnvironnementJSONFormat(String name) {
         this.name = name;
     }
-<<<<<<< Updated upstream
-    public void addChildren(String nameofchildren){
-        this.children.add(new EnvironnementJSONFormat(nameofchildren));
-    }
-    public void searchandadd(String name){
-        String[] split=name.split(".");
-        if(this.name==split[split.length-2]){
-            this.addChildren(split[split.length-1]);
-        }
-        for(EnvironnementJSONFormat s : children){
-            s.searchandadd(name);
-        }
-    }
-}
-=======
 
     @Override
     public String toString() {
@@ -80,7 +58,7 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
     }
 
     public void searchandadd(String nameparent, String namechildren) {
-        if (Objects.equals(this.name, nameparent)) {
+        if (namechildren.equals(nameparent)) {
             this.addChildren(namechildren);
         }
         for (EnvironnementJSONFormat s : children) {
@@ -144,4 +122,3 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
         System.out.println(space);
     }
 }
->>>>>>> Stashed changes
