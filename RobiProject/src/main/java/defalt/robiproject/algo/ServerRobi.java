@@ -108,7 +108,8 @@ public class ServerRobi extends Server {
                             case "executer_block":
                                 Iterator<SNode> itor = compiled.iterator();
                                 while (itor.hasNext()) {
-                                    new Interpreter().compute(environment, itor.next());
+                                    Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                    super.sendMessage(reponse);
                                 }
                                 BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
                                 Graphics2D g2d = image.createGraphics();

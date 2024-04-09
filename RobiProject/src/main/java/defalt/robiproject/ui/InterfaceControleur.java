@@ -3,6 +3,8 @@ package defalt.robiproject.ui;
 
 import com.google.gson.GsonBuilder;
 import defalt.robiproject.algo.CommandeSocketTypeAdapter;
+import defalt.robiproject.algo.Reponse;
+import defalt.robiproject.parser.SNode;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Base64;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 import com.google.gson.Gson;
 
@@ -27,7 +30,6 @@ import defalt.robiproject.algo.CommandeSocket;
 import javax.imageio.ImageIO;
 
 public class InterfaceControleur extends ClientRobi{
-
     @FXML
     private TextField entreeIp;
 
@@ -36,7 +38,6 @@ public class InterfaceControleur extends ClientRobi{
 
     @FXML
     private Label labelEtatConnexion;
-
 
     @FXML
     private TextArea areaCommand;
@@ -49,6 +50,12 @@ public class InterfaceControleur extends ClientRobi{
 
     @FXML
     private ImageView Images;
+
+    @FXML
+    public TextArea entreeEnvironment;
+
+    @FXML
+    public TextArea entreeSNode;
 
     private boolean IsConnected=false;
 
@@ -218,6 +225,9 @@ public class InterfaceControleur extends ClientRobi{
                         }
                     }
                 }
+                if(recv instanceof Reponse) {
+                    this.setEnvironmentsSNodes((Reponse) recv);
+                }
             }catch (ClassNotFoundException | IOException e) {
                 if(!getSocket().isClosed()) {
                     // Gérer ClassNotFoundException
@@ -241,6 +251,15 @@ public class InterfaceControleur extends ClientRobi{
         byteBuffer.flip();
         pixelWriter.setPixels(0, 0, width, height, PixelFormat.getByteBgraInstance(), byteBuffer, width * 4);
         return javafxImage;
+    }
+
+    private void setEnvironmentsSNodes(Reponse reponse) {
+        this.entreeEnvironment.clear();
+        for(String text : reponse.getEnvironment()) {
+            this.entreeEnvironment.appendText(text + "\n");
+        }
+
+        entreeSNode.appendText(reponse.getSNode());
     }
 
 
