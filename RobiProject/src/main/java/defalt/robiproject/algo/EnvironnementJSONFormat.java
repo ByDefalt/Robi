@@ -30,14 +30,13 @@ public class EnvironnementJSONFormat {
     public void addChildren(String nameofchildren){
         this.children.add(new EnvironnementJSONFormat(nameofchildren));
     }
-    public EnvironnementJSONFormat searchandadd(String name){
+    public void searchandadd(String name){
         String[] split=name.split(".");
-        if(this.name==split[split.length-1]){
+        if(this.name==split[split.length-2]){
             this.addChildren(split[split.length-1]);
         }
         for(EnvironnementJSONFormat s : children){
             s.searchandadd(name);
         }
-        return null;
     }
 }
