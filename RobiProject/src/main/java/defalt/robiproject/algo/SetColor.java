@@ -19,6 +19,10 @@ public class SetColor implements Command {
                 return Color.WHITE;
             case "red":
                 return Color.RED;
+            case "blue":
+                return Color.BLUE;
+            case "green":
+                return Color.GREEN;
             default:
                 return null;
         }
@@ -26,18 +30,17 @@ public class SetColor implements Command {
 
 	@Override
 	public Reference run(Reference receiver, SNode method) {
-		Object objet ;
-	    Color newColor = getColorFromString(method.get(2).contents());
-	    
-	    
-	    objet = receiver.getReceiver();
-		if(objet instanceof GSpace){
-			((GSpace)objet).setColor(newColor);
-		} else if(objet instanceof GRect){
-			((GRect)objet).setColor(newColor);
-		}else{
-			((GElement)objet).setColor(newColor);
-		}
-	return receiver;
+        Color newColor = getColorFromString(method.get(2).contents());
+        Object objet = receiver.getReceiver();
+        if (newColor != null) {
+            if(objet instanceof GSpace){
+                ((GSpace)objet).setColor(newColor);
+            } else if(objet instanceof GRect){
+                ((GRect)objet).setColor(newColor);
+            }else{
+                ((GElement)objet).setColor(newColor);
+            }
+        }
+        return receiver;
 	}
 }
