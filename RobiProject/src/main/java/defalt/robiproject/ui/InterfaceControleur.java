@@ -76,7 +76,6 @@ public class InterfaceControleur extends ClientRobi{
             try {
                 IsConnected=false;
                 super.stopSocket();
-                labelEtatConnexion.setText("Déconnecté");
             } catch (IOException e) {
                 showError("erreur de Deconnexion");
             }
@@ -217,11 +216,11 @@ public class InterfaceControleur extends ClientRobi{
                 }
             }catch (EOFException e) {
                 // Cette exception est levée lorsque le serveur ferme la connexion
-                System.out.println("Le serveur a fermé la connexion.");
+                Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion server");});
                 // Traiter la fermeture de la connexion du serveur
             } catch (SocketException e) {
-                // Cette exception est levée lorsqu'une erreur se produit sur la connexion (par exemple, le client se déconnecte)
-                System.out.println("Une erreur de connexion s'est produite : " + e.getMessage());
+                // Cette exception est levée lorsqu'une erreur se produit sur la connexion (par exemple, le client se déconnecte ou kill server)
+                Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion");});
                 // Traiter la fermeture de la connexion du client
             } catch (IOException e) {
                 // Cette exception est levée pour d'autres erreurs d'entrée/sortie

@@ -101,7 +101,9 @@ public class ServerRobi extends Server {
 
                                 // Désérialiser le JSON en un objet CommandeSocket en utilisant Gson avec l'adaptateur de type personnalisé
                                 CommandeSocket commande = gson.fromJson((String) recv, CommandeSocket.class);
-
+                                String base64Image = null;
+                                Graphics2D g2d=null;
+                                BufferedImage image =null;
                                 switch (commande.getName()) {
                                     case "envoyer":
                                         code = commande.getCode();
@@ -113,18 +115,31 @@ public class ServerRobi extends Server {
                                             new Interpreter().compute(environment, itor.next());
                                             position = 1;
                                         }
-                                        System.out.println(position);
+                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                        g2d = image.createGraphics();
+                                        space.paint(g2d);
+                                        g2d.dispose();
+                                        base64Image = null;
+                                        try {
+                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                            ImageIO.write(image, "png", baos);
+                                            byte[] imageBytes = baos.toByteArray();
+                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                            super.sendMessage(base64Image);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                         break;
                                     case "executer_block":
                                         itor = compiled.iterator();
                                         while (itor.hasNext()) {
                                             new Interpreter().compute(environment, itor.next());
                                         }
-                                        BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                        Graphics2D g2d = image.createGraphics();
+                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                        g2d = image.createGraphics();
                                         space.paint(g2d);
                                         g2d.dispose();
-                                        String base64Image = null;
+                                        base64Image = null;
                                         try {
                                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                                             ImageIO.write(image, "png", baos);
@@ -141,11 +156,24 @@ public class ServerRobi extends Server {
                                             space.changeWindowSize(new Dimension(800, 500));
                                             itor = compiled.iterator();
                                             position--;
-                                            System.out.println(position);
                                             for (int i = 1; i <= position; i++) {
                                                 if (itor.hasNext()) {
                                                     new Interpreter().compute(environment, itor.next());
                                                 }
+                                            }
+                                            image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                            g2d = image.createGraphics();
+                                            space.paint(g2d);
+                                            g2d.dispose();
+                                            base64Image = null;
+                                            try {
+                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                                ImageIO.write(image, "png", baos);
+                                                byte[] imageBytes = baos.toByteArray();
+                                                base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                                super.sendMessage(base64Image);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
                                             }
                                         }
                                         break;
@@ -154,7 +182,20 @@ public class ServerRobi extends Server {
                                             new Interpreter().compute(environment, itor.next());
                                             position++;
                                         }
-                                        System.out.println(position);
+                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                        g2d = image.createGraphics();
+                                        space.paint(g2d);
+                                        g2d.dispose();
+                                        base64Image = null;
+                                        try {
+                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                            ImageIO.write(image, "png", baos);
+                                            byte[] imageBytes = baos.toByteArray();
+                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                            super.sendMessage(base64Image);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                         break;
                                     default:
                                         System.out.println("commande name undefined");
