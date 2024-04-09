@@ -222,9 +222,10 @@ public class InterfaceControleur extends ClientRobi{
                             }
                         }
                     }
-                  if(recv instanceof Reponse) {
-                    this.setEnvironmentsSNodes((Reponse) recv);
-                  }
+                    if (recv instanceof Reponse) {
+                        this.setEnvironmentsSNodes((Reponse) recv);
+                    }
+                }
             } catch (EOFException e) {
                 // Cette exception est levée lorsque le serveur ferme la connexion
                 Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion server");});
