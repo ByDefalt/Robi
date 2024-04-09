@@ -51,10 +51,10 @@ public class InterfaceControleur extends ClientRobi{
     private ImageView Images;
 
     @FXML
-    public TextArea entreeEnvironment;
+    public TextArea areaEnvironment;
 
     @FXML
-    public TextArea entreeSNode;
+    public TextArea areaSNode;
 
     private boolean IsConnected=false;
 
@@ -142,6 +142,8 @@ public class InterfaceControleur extends ClientRobi{
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
                 String json = gson.toJson(commande);
+                areaSNode.clear();
+                areaEnvironment.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -158,6 +160,8 @@ public class InterfaceControleur extends ClientRobi{
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
                 String json = gson.toJson(commande);
+                areaSNode.clear();
+                areaEnvironment.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -174,6 +178,8 @@ public class InterfaceControleur extends ClientRobi{
                         .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
                         .create();
                 String json = gson.toJson(commande);
+                areaSNode.clear();
+                areaEnvironment.clear();
                 super.sendMessage(json);
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -247,12 +253,12 @@ public class InterfaceControleur extends ClientRobi{
     }
 
     private void setEnvironmentsSNodes(Reponse reponse) {
-        this.entreeEnvironment.clear();
+        this.areaEnvironment.clear();
         for(String text : reponse.getEnvironment()) {
-            this.entreeEnvironment.appendText(text + "\n");
+            this.areaEnvironment.appendText(text + "\n");
         }
 
-        entreeSNode.appendText(reponse.getSNode());
+        areaSNode.appendText(reponse.getSNode());
     }
 
             
@@ -277,5 +283,7 @@ public class InterfaceControleur extends ClientRobi{
 
     public final void initialize() {
         areaCommand.setEditable(false);
+        areaEnvironment.setEditable(false);
+        areaSNode.setEditable(false);
     }
 }
