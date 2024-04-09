@@ -8,8 +8,8 @@ import graphicLayer.GRect;
 import graphicLayer.GSpace;
 
 public class Exercice1_0 {
-    GSpace space;
-    GRect robi;
+    public GSpace space;
+    public GRect robi;
     int speed = 1;
 
     public Exercice1_0() {

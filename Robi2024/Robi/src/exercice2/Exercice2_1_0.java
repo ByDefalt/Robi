@@ -13,8 +13,8 @@ import stree.parser.SParser;
 
 
 public class Exercice2_1_0 {
-	GSpace space = new GSpace("Exercice 2_1", new Dimension(200, 100));
-	GRect robi = new GRect();
+	public GSpace space = new GSpace("Exercice 2_1", new Dimension(200, 100));
+	public GRect robi = new GRect();
 	String script = "(space setColor black) (robi setColor yellow)";
 
 	public Exercice2_1_0() {
