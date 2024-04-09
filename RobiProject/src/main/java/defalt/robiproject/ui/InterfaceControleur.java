@@ -1,4 +1,3 @@
-
 package defalt.robiproject.ui;
 
 import com.google.gson.GsonBuilder;
@@ -6,6 +5,7 @@ import defalt.robiproject.algo.CommandeSocketTypeAdapter;
 import defalt.robiproject.algo.Reponse;
 import defalt.robiproject.parser.SNode;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.*;
@@ -13,14 +13,13 @@ import javafx.stage.FileChooser;
 import javafx.scene.control.Alert.AlertType;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.io.*;
+import java.net.SocketException;
 import java.util.Base64;
+
 import java.io.ByteArrayInputStream;
 import java.util.List;
+
 
 import com.google.gson.Gson;
 
@@ -86,8 +85,6 @@ public class InterfaceControleur extends ClientRobi{
             try {
                 IsConnected=false;
                 super.stopSocket();
-                myThread.interrupt();
-                labelEtatConnexion.setText("Déconnecté");
             } catch (IOException e) {
                 showError("erreur de Deconnexion");
             }
@@ -196,61 +193,56 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
-
     @Override
     public final void receiveMessage() {
         while (!getSocket().isClosed()) {
             try {
                 Object recv = getIn().readObject();
-                if (recv instanceof String) {
-                    String recvString = (String) recv;
-                    byte[] imageBytes = Base64.getDecoder().decode(recvString);
-                    if (imageBytes.length == 0) {
-                        showError("Erreur lors de la reception du message");
-                    } else {
-                        try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
-                            BufferedImage bufferedImage = ImageIO.read(bis);
-
-                            if (bufferedImage == null) {
-                                showError("Erreur lors de la reception du message");
-                            }else{
-                                // Convertir BufferedImage en Image de JavaFX
-                                Image fxImage = convertToJavaFXImage(bufferedImage);
-
-                                // Créer un ImageView et l'ajouter à une scène
-                                Images.setImage(fxImage);
-                            }
-                        } catch (IOException e) {
+                if (recv != null) {
+                    if (recv instanceof String) {
+                        String recvString = (String) recv;
+                        byte[] imageBytes = Base64.getDecoder().decode(recvString);
+                        if (imageBytes.length == 0) {
                             showError("Erreur lors de la reception du message");
+                        } else {
+                            try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
+                                BufferedImage bufferedImage = ImageIO.read(bis);
+
+                                if (bufferedImage == null) {
+                                    showError("Erreur lors de la reception du message");
+                                } else {
+                                    // Convertir BufferedImage en Image de JavaFX
+                                    Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                                    Images.setImage(null);
+                                    // Créer un ImageView et l'ajouter à une scène
+                                    Images.setImage(fxImage);
+                                }
+                            } catch (IOException e) {
+                                showError("Erreur lors de la reception du message");
+                            }
                         }
                     }
-                }
-                if(recv instanceof Reponse) {
+                  if(recv instanceof Reponse) {
                     this.setEnvironmentsSNodes((Reponse) recv);
-                }
-            }catch (ClassNotFoundException | IOException e) {
-                if(!getSocket().isClosed()) {
-                    // Gérer ClassNotFoundException
-                    System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
-                }
+                  }
+            } catch (EOFException e) {
+                // Cette exception est levée lorsque le serveur ferme la connexion
+                Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion server");});
+                // Traiter la fermeture de la connexion du serveur
+            } catch (SocketException e) {
+                // Cette exception est levée lorsqu'une erreur se produit sur la connexion (par exemple, le client se déconnecte ou kill server)
+                Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion");});
+                // Traiter la fermeture de la connexion du client
+            } catch (IOException e) {
+                // Cette exception est levée pour d'autres erreurs d'entrée/sortie
+                System.out.println("Une erreur d'entrée/sortie s'est produite : " + e.getMessage());
+                // Traiter l'erreur d'entrée/sortie
+            } catch (ClassNotFoundException e) {
+                // Cette exception est levée si la classe de l'objet reçu n'a pas été trouvée
+                System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
+                // Traiter l'erreur de classe non trouvée
             }
         }
-    }
-
-    // Fonction de conversion BufferedImage en Image de JavaFX
-    private Image convertToJavaFXImage(BufferedImage bufferedImage) {
-        int width = bufferedImage.getWidth();
-        int height = bufferedImage.getHeight();
-        WritableImage javafxImage = new WritableImage(width, height);
-        PixelWriter pixelWriter = javafxImage.getPixelWriter();
-        int[] pixelData = bufferedImage.getRGB(0, 0, width, height, null, 0, width);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(4 * width * height);
-        for (int argb : pixelData) {
-            byteBuffer.putInt(argb);
-        }
-        byteBuffer.flip();
-        pixelWriter.setPixels(0, 0, width, height, PixelFormat.getByteBgraInstance(), byteBuffer, width * 4);
-        return javafxImage;
     }
 
     private void setEnvironmentsSNodes(Reponse reponse) {
@@ -262,7 +254,7 @@ public class InterfaceControleur extends ClientRobi{
         entreeSNode.appendText(reponse.getSNode());
     }
 
-
+            
     private void showError(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.ERROR);
@@ -271,6 +263,15 @@ public class InterfaceControleur extends ClientRobi{
             alert.setResizable(true);
             alert.showAndWait();
         });
+    }
+    public final void stopThreadAndConnection() {
+            try {
+                super.stopSocket();
+                myThread.interrupt();
+                IsConnected = false;
+            } catch (IOException e) {
+                showError("Erreur lors de la fermeture de la connexion");
+            }
     }
 
     public final void initialize() {

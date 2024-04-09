@@ -7,12 +7,13 @@ import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
 
 import javax.imageio.ImageIO;
-import javax.swing.plaf.PanelUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +28,9 @@ public class ServerRobi extends Server {
     private SParser<SNode> parser = new SParser<>();
     private List<SNode> compiled;
     private GSpace space;
-    Environment environment = new Environment();
+    private Environment environment = new Environment();
+    private Iterator<SNode> itor;
+    private int position=0;
 
     public final boolean isConnected() {
         return connection;
@@ -54,7 +57,7 @@ public class ServerRobi extends Server {
 
     public ServerRobi(){
         space = new GSpace("Exercice 5", new Dimension(800, 500));
-        space.open();
+        //space.open();
         Reference spaceRef = new Reference(space);
         Reference rectClassRef = new Reference(GRect.class);
         Reference ovalClassRef = new Reference(GOval.class);
@@ -86,60 +89,136 @@ public class ServerRobi extends Server {
         while(true){
             if(this.clientSocket.isClosed()){
                 this.setClientSocket(this.accept());
-            }else{
+            }
                 try {
-                    Object recv = getIn().readObject();
-                    if (recv instanceof String) {
-                        // Créer l'instance Gson en utilisant un GsonBuilder
-                        Gson gson = new GsonBuilder()
-                                .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
-                                .create();
+                        Object recv = getIn().readObject();
+                        if (recv != null) {
+                            if (recv instanceof String) {
+                                // Créer l'instance Gson en utilisant un GsonBuilder
+                                Gson gson = new GsonBuilder()
+                                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
+                                        .create();
 
-                        // Désérialiser le JSON en un objet CommandeSocket en utilisant Gson avec l'adaptateur de type personnalisé
-                        CommandeSocket commande = gson.fromJson((String) recv, CommandeSocket.class);
-
-                        switch (commande.getName()){
-                            case "envoyer":
-                                code= commande.getCode();
-                                compiled = parser.parse(code);
-                                break;
-                            case "executer_pas":
-                                break;
-                            case "executer_block":
-                                Iterator<SNode> itor = compiled.iterator();
-                                while (itor.hasNext()) {
-                                    Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                    super.sendMessage(reponse);
-                                }
-                                BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                Graphics2D g2d = image.createGraphics();
-                                space.paint(g2d);
-                                g2d.dispose();
+                                // Désérialiser le JSON en un objet CommandeSocket en utilisant Gson avec l'adaptateur de type personnalisé
+                                CommandeSocket commande = gson.fromJson((String) recv, CommandeSocket.class);
                                 String base64Image = null;
-                                try {
-                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                    ImageIO.write(image, "png", baos);
-                                    byte[] imageBytes = baos.toByteArray();
-                                    base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                    super.sendMessage(base64Image);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                Graphics2D g2d=null;
+                                BufferedImage image =null;
+                                switch (commande.getName()) {
+                                    case "envoyer":
+                                        code = commande.getCode();
+                                        compiled = parser.parse(code);
+                                        break;
+                                    case "executer_pas":
+                                        itor = compiled.iterator();
+                                        if (itor.hasNext()) {
+                                            Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                            super.sendMessage(reponse);
+                                            position = 1;
+                                        }
+                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                        g2d = image.createGraphics();
+                                        space.paint(g2d);
+                                        g2d.dispose();
+                                        base64Image = null;
+                                        try {
+                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                            ImageIO.write(image, "png", baos);
+                                            byte[] imageBytes = baos.toByteArray();
+                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                            super.sendMessage(base64Image);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case "executer_block":
+                                        itor = compiled.iterator();
+                                        while (itor.hasNext()) {
+                                            Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                            super.sendMessage(reponse);
+                                        }
+                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                        g2d = image.createGraphics();
+                                        space.paint(g2d);
+                                        g2d.dispose();
+                                        base64Image = null;
+                                        try {
+                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                            ImageIO.write(image, "png", baos);
+                                            byte[] imageBytes = baos.toByteArray();
+                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                            super.sendMessage(base64Image);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        break;
+                                    case "precedent":
+                                        if (position > 1) {
+                                            space.clear();
+                                            space.changeWindowSize(new Dimension(800, 500));
+                                            itor = compiled.iterator();
+                                            position--;
+                                            for (int i = 1; i <= position; i++) {
+                                                if (itor.hasNext()) {
+                                                    Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                                    super.sendMessage(reponse);
+                                                }
+                                            }
+                                            image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                            g2d = image.createGraphics();
+                                            space.paint(g2d);
+                                            g2d.dispose();
+                                            base64Image = null;
+                                            try {
+                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                                ImageIO.write(image, "png", baos);
+                                                byte[] imageBytes = baos.toByteArray();
+                                                base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                                super.sendMessage(base64Image);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        break;
+                                    case "suivant":
+                                        if(position!=0) {
+                                            if (itor.hasNext()) {
+                                                Reponse reponse = new Interpreter().compute(environment, itor.next());
+                                                super.sendMessage(reponse);
+                                                position++;
+                                            }
+                                            image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                                            g2d = image.createGraphics();
+                                            space.paint(g2d);
+                                            g2d.dispose();
+                                            base64Image = null;
+                                            try {
+                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                                ImageIO.write(image, "png", baos);
+                                                byte[] imageBytes = baos.toByteArray();
+                                                base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                                                super.sendMessage(base64Image);
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        break;
+                                    default:
+                                        System.out.println("commande name undefined");
+                                        break;
                                 }
-                                break;
-                            case "precedent":
-                                break;
-                            case "suivant":
-                                break;
-                            default:
-                                System.out.println("commande name undefined");
-                                break;
+
+                            }
                         }
+                }catch (EOFException e){
+                    try {
+                        this.clientSocket.close(); // Fermeture de la socket côté serveur
+                    } catch (IOException ex) {
+                        ex.printStackTrace(); // Gérer les erreurs de fermeture de la socket
                     }
-                } catch (ClassNotFoundException e) {
+                }catch(ClassNotFoundException | IOException e) {
                     e.printStackTrace();
                 }
-            }
-
         }
     }
 

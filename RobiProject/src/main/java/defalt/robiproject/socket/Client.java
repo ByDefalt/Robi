@@ -9,6 +9,10 @@ public class Client extends Thread implements SocketInterface {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+    public ObjectOutputStream getOut() {
+        return out;
+    }
+
     public Socket getSocket(){
         return socket;
     }
@@ -20,14 +24,14 @@ public class Client extends Thread implements SocketInterface {
     @Override
     public void startSocket(String serverAddress, int port) throws IOException {
         socket = new Socket(serverAddress, port);
-        out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
     }
     @Override
     public void stopSocket() throws IOException {
+        socket.close();
         in.close();
         out.close();
-        socket.close();
     }
     @Override
     public void sendMessage(Object message) throws IOException {
