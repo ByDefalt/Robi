@@ -87,32 +87,13 @@ public class EnvironnementJSONFormat {
                 .create();
         return gson.fromJson(json, EnvironnementJSONFormat.class);
     }
-
-
-    }
-
-    public void addChildren(String nameofchildren){
-        this.children.add(new EnvironnementJSONFormat(nameofchildren));
-    }
-    public void add(String name){
-        String[] split=name.split("\\.");
-        searchandadd(split[split.length-2],split[split.length-1]);
-    }
-    public void searchandadd(String nameparent,String namechildren){
-        if(Objects.equals(this.name, nameparent)){
-            this.addChildren(namechildren);
-        }
-        for(EnvironnementJSONFormat s : children){
-            s.searchandadd(nameparent,namechildren);
-        }
-    }
+    
     public static void main(String[] args) {
         EnvironnementJSONFormat space=new EnvironnementJSONFormat("space");
         space.add("space.robi");
         space.add("space.ibor");
         space.add("space.robi.jsp1");
         space.add("space.jsp1.jsp2");
-        System.out.println(space.equals(space2));
         System.out.println(space);
         String json = space.toJson();
         System.out.println(json);
