@@ -1,15 +1,35 @@
 package defalt.robiproject.algo;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import java.util.List;
 import java.util.Objects;
 
 public class EnvironnementJSONFormat {
+    @Override
+    public String toString() {
+        return "EnvironnementJSONFormat{" +
+                "name='" + name + '\'' +
+                ", children=" + children +
+                '}';
+    }
 
     private String name;
 
-    private List<EnvironnementJSONFormat> children=new ArrayList<>();
+    private List<EnvironnementJSONFormat> children = new ArrayList<>();
 
+
+    public EnvironnementJSONFormat() {
+    }
+
+    public EnvironnementJSONFormat(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;
@@ -26,20 +46,49 @@ public class EnvironnementJSONFormat {
     public void setChildren(List<EnvironnementJSONFormat> children) {
         this.children = children;
     }
-    public EnvironnementJSONFormat(String name){
-        this.name=name;
+
+    public void addChildren(String nameofchildren) {
+        this.children.add(new EnvironnementJSONFormat(nameofchildren));
+    }
+
+    public void add(String name) {
+        String[] split = name.split("\\.");
+        if (split.length >= 2) {
+            searchandadd(split[split.length - 2], split[split.length - 1]);
+        }
     }
 
     @Override
-    public String toString() {
-<<<<<<< Updated upstream
-        return "EnvironnementJSONFormat{" +
-                "name='" + name + '\'' +
-                ", children=" + children +
-                '}';
-=======
-        return "EnvironnementJSONFormat{ name=" + name + " + children=" + children + '}';
->>>>>>> Stashed changes
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnvironnementJSONFormat that = (EnvironnementJSONFormat) o;
+        return this.name.equals(that.getName());
+    }
+
+    public void searchandadd(String nameparent, String namechildren) {
+        if (this.name.equals(nameparent) && !this.children.contains(new EnvironnementJSONFormat(namechildren))) {
+            this.addChildren(namechildren);
+        }
+        for (EnvironnementJSONFormat s : children) {
+            s.searchandadd(nameparent, namechildren);
+        }
+    }
+    public String toJson() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
+                .create();
+        return gson.toJson(this);
+    }
+
+    public static EnvironnementJSONFormat fromJson(String json) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
+                .create();
+        return gson.fromJson(json, EnvironnementJSONFormat.class);
+    }
+
+
     }
 
     public void addChildren(String nameofchildren){
@@ -63,10 +112,11 @@ public class EnvironnementJSONFormat {
         space.add("space.ibor");
         space.add("space.robi.jsp1");
         space.add("space.jsp1.jsp2");
+        System.out.println(space.equals(space2));
         System.out.println(space);
+        String json = space.toJson();
+        System.out.println(json);
+        EnvironnementJSONFormat env=EnvironnementJSONFormat.fromJson(json);
+        System.out.println(env);
     }
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
