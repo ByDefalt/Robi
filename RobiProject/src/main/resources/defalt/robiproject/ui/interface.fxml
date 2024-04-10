@@ -66,7 +66,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.23057644110275685, 0.7067669172932329, 0.5" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.15716829919857522, 0.5011130899376669, 0.8305877114870881" VBox.vgrow="ALWAYS">
          <items>
             <VBox prefHeight="374.0" prefWidth="135.0">
                <children>
