@@ -9,7 +9,25 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Cet adaptateur personnalisé permet de sérialiser et désérialiser des objets CommandeSocket en format JSON.
+ * Il gère la conversion des objets CommandeSocket en JSON et vice versa, en prenant en charge les différents types de données associées.
+ * 
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
 public class CommandeSocketAdapter implements JsonSerializer<CommandeSocket>, JsonDeserializer<CommandeSocket> {
+
+    /**
+     * Sérialise un objet CommandeSocket en JSON.
+     * 
+     * @param src L'objet CommandeSocket à sérialiser.
+     * @param typeOfSrc Le type de l'objet source.
+     * @param context Le contexte de sérialisation.
+     * @return Un élément JSON représentant l'objet CommandeSocket.
+     */
     @Override
     public JsonElement serialize(CommandeSocket src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
@@ -30,6 +48,15 @@ public class CommandeSocketAdapter implements JsonSerializer<CommandeSocket>, Js
     }
 
 
+    /**
+     * Désérialise un élément JSON en objet CommandeSocket.
+     * 
+     * @param json L'élément JSON à désérialiser.
+     * @param typeOfT Le type de l'objet résultant.
+     * @param context Le contexte de désérialisation.
+     * @return Un objet CommandeSocket résultant de la désérialisation.
+     * @throws JsonParseException Si une erreur se produit lors de la désérialisation.
+     */
     @Override
     public CommandeSocket deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
