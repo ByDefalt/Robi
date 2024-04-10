@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Cet adaptateur personnalisé permet de sérialiser et désérialiser des objets CommandeSocket en format JSON.
+ * Cet adaptateur permet de sérialiser et désérialiser des objets CommandeSocket en format JSON.
  * Il gère la conversion des objets CommandeSocket en JSON et vice versa, en prenant en charge les différents types de données associées.
  * 
  * @author LE BRAS Erwan
