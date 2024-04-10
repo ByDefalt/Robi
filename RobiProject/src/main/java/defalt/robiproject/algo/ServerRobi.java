@@ -147,9 +147,9 @@ public class ServerRobi extends Server {
                                 default:
                                     break;
                         }
-                        CreateAndSendPosition();
-                        CreateAndSendEnvironement();
-                        CreateAndSendImage();
+                        createAndSendPosition();
+                        createAndSendEnvironement();
+                        createAndSendImage();
                     }}
                 }catch (EOFException e){
                     try {
@@ -162,7 +162,7 @@ public class ServerRobi extends Server {
                 }
         }
     }
-    public void CreateAndSendImage(){
+    public void createAndSendImage(){
         BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
         space.paint(g2d);
@@ -179,17 +179,16 @@ public class ServerRobi extends Server {
             e.printStackTrace();
         }
     }
-    public void CreateAndSendEnvironement() throws IOException {
+    public void createAndSendEnvironement() throws IOException {
         for (Map.Entry<String, Reference> m : environment.getVariables().entrySet()) {
             if(!m.getKey().equals("space") && !m.getKey().equals("rect.class") && !m.getKey().equals("oval.class") && !m.getKey().equals("image.class") && !m.getKey().equals("label.class")){
                 spacejson.add(m.getKey());
             }
         }
         CommandeSocket commande=new CommandeSocket("EnvironementJson",listenv);
-        System.out.println(listenv);
         super.sendMessage(commande.Commande2Json());
     }
-    public void CreateAndSendPosition() throws IOException {
+    public void createAndSendPosition() throws IOException {
         CommandeSocket commande=new CommandeSocket("Position",position);
         super.sendMessage(commande.Commande2Json());
     }
