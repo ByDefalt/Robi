@@ -210,11 +210,11 @@ public class InterfaceControleur extends ClientRobi{
                 // Traiter la fermeture de la connexion du client
             } catch (IOException e) {
                 // Cette exception est levée pour d'autres erreurs d'entrée/sortie
-                System.out.println("Une erreur d'entrée/sortie s'est produite : " + e.getMessage());
+                Platform.runLater(() -> {labelEtatConnexion.setText("Une erreur d'entrée/sortie s'est produite");});
                 // Traiter l'erreur d'entrée/sortie
             } catch (ClassNotFoundException e) {
                 // Cette exception est levée si la classe de l'objet reçu n'a pas été trouvée
-                System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
+                Platform.runLater(() -> {labelEtatConnexion.setText("Une erreur d'entrée s'est produite");});
                 // Traiter l'erreur de classe non trouvée
             }
         }
