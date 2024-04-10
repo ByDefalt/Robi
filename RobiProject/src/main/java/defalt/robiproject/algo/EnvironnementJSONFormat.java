@@ -18,9 +18,9 @@ public class EnvironnementJSONFormat {
                 '}';
     }
 
-    public String name;
+    private String name;
 
-    public List<EnvironnementJSONFormat> children = new ArrayList<>();
+    private List<EnvironnementJSONFormat> children = new ArrayList<>();
 
     public EnvironnementJSONFormat() {
     }
@@ -61,11 +61,11 @@ public class EnvironnementJSONFormat {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EnvironnementJSONFormat that = (EnvironnementJSONFormat) o;
-        return this.name.equals(that.name);
+        return this.name.equals(that.getName());
     }
 
     public void searchandadd(String nameparent, String namechildren) {
-        if (this.name.equals(nameparent) && this.children.contains(new EnvironnementJSONFormat(namechildren))) {
+        if (this.name.equals(nameparent) && !this.children.contains(new EnvironnementJSONFormat(namechildren))) {
             this.addChildren(namechildren);
         }
         for (EnvironnementJSONFormat s : children) {
@@ -87,10 +87,12 @@ public class EnvironnementJSONFormat {
     }
     public static void main(String[] args) {
         EnvironnementJSONFormat space = new EnvironnementJSONFormat("space");
+        EnvironnementJSONFormat space2 = new EnvironnementJSONFormat("space");
         space.add("space.robi");
         space.add("space.ibor");
         space.add("space.robi.jsp1");
         space.add("space.jsp1.jsp2");
+        System.out.println(space.equals(space2));
         System.out.println(space);
         String json = space.toJson();
         System.out.println(json);
