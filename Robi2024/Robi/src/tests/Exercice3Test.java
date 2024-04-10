@@ -20,9 +20,9 @@ public class Exercice3Test {
         GRect robi = exo3_0.robi;
         assertNotNull(space);
         assertNotNull(robi);
-        assertEquals(Color.WHITE, space.getColorModel());
-        assertEquals(Color.RED, robi.defaultColor());
+        assertEquals(Color.WHITE, space.getBackgroundColor());
+        assertEquals(Color.RED, robi.getColor());
         // Vérification de la translation de robi
-        assertEquals(new java.awt.Point(0, 10), robi.getPosition());
+        assertEquals(new java.awt.Point(0, 10), robi.recupPosition());
     }
 }

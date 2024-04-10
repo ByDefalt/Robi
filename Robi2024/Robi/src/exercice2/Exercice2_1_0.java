@@ -67,6 +67,10 @@ public class Exercice2_1_0 {
 	                return Color.BLACK;
 	            case "yellow":
 	                return Color.YELLOW;
+	            case "white":
+	                return Color.WHITE;
+	            case "red":
+	                return Color.RED;
 	            default:
 	                return null;
 	        }

@@ -148,4 +148,7 @@ public class GSpace extends JPanel implements GContainer, KeyListener, MouseList
 		return elements.toArray(new GElement[elements.size()]);
 	}
 
+	public Color getBackgroundColor() {
+	    return getBackground();
+	}
 }

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.awt.Color;
+import java.awt.Point;
 
 import org.junit.Test;
 
@@ -21,8 +22,8 @@ public class Exercice2Test {
         GRect robi = exo2_1.robi;
         assertNotNull(space);
         assertNotNull(robi);
-        assertEquals(Color.BLACK, space.getColorModel());
-        assertEquals(Color.YELLOW, robi.defaultColor());
+        assertEquals(Color.BLACK, space.getBackgroundColor());
+        assertEquals(Color.YELLOW, robi.getColor());
     }
 
     @Test
@@ -32,9 +33,9 @@ public class Exercice2Test {
         GRect robi = exo2_2.robi;
         assertNotNull(space);
         assertNotNull(robi);
-        assertEquals(Color.WHITE, space.getColorModel());
-        assertEquals(Color.RED, robi.defaultColor());
+        assertEquals(Color.WHITE, space.getBackgroundColor());
+        assertEquals(Color.RED, robi.getColor());
         // Translation de robi
-        assertEquals(new java.awt.Point(10, 10), robi.getPosition());
+        assertEquals(new Point(0, 0), robi.recupPosition());
     }
 }
