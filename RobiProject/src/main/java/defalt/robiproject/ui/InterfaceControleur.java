@@ -94,7 +94,6 @@ public class InterfaceControleur extends ClientRobi{
             try {
                 areaCommand.appendText(entreeCommand.getText() + "\n\n");
                 CommandeSocket commande = new CommandeSocket("envoyer","String" ,entreeCommand.getText());
-                System.out.println(commande.Commande2Json());
                 super.sendMessage(commande.Commande2Json());
                 entreeCommand.clear();
             } catch (IOException e) {
@@ -178,7 +177,6 @@ public class InterfaceControleur extends ClientRobi{
                 Object recv = getIn().readObject();
                     if(recv instanceof String){
                         CommandeSocket commande=new CommandeSocket("");
-                        System.out.println((String) recv);
                         CommandeSocket mycommande = commande.Json2Commande((String) recv);
                         switch (mycommande.getName()){
                             case "EnvironementJson":
