@@ -1,41 +1,5 @@
 package exercice4;
 
- /*
-	(space setColor black)  
-	(robi setColor yellow) 
-	(space sleep 2000) 
-	(space setColor white)  
-	(space sleep 1000) 	
-	(space add robi (GRect new))
-	(robi setColor green)
-	(robi translate 100 50)
-	(space del robi)
-	(robi setColor red)		  
-	(space sleep 1000)
-	(robi translate 100 0)
-	(space sleep 1000)
-	(robi translate 0 50)
-	(space sleep 1000)
-	(robi translate -100 0)
-	(space sleep 1000)
-	(robi translate 0 -40) ) 
-	
-	
-(space add robi (rect.class new))
-(robi translate 130 50)
-(robi setColor yellow)
-(space add momo (oval.class new))
-(momo setColor red)
-(momo translate 80 80)
-(space add pif (image.class new alien.gif))
-(pif translate 100 0)
-(space add hello (label.class new "Hello world"))
-(hello translate 10 10)
-(hello setColor black)
-
-*/
-
-
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.Iterator;
@@ -50,11 +14,23 @@ import stree.parser.SNode;
 import stree.parser.SParser;
 import tools.Tools;
 
-
+/**
+ * Classe principale pour l'exercice 4_2_0. Cette classe permet de créer un
+ * espace graphique et d'interpréter une série de commandes définies dans une
+ * s-expression.
+ * 
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
 public class Exercice4_2_0 {
-	// Une seule variable d'instance
+
 	Environment environment = new Environment();
 
+	/**
+	 * Constructeur de la classe Exercice4_2_0.
+	 */
 	public Exercice4_2_0() {
 		GSpace space = new GSpace("Exercice 4", new Dimension(200, 100));
 		space.open();
@@ -71,7 +47,7 @@ public class Exercice4_2_0 {
 
 		spaceRef.addCommand("add", new AddElement(environment));
 		spaceRef.addCommand("del", new DelElement(environment));
-		
+
 		rectClassRef.addCommand("new", new NewElement());
 		ovalClassRef.addCommand("new", new NewElement());
 		imageClassRef.addCommand("new", new NewImage());
@@ -82,27 +58,26 @@ public class Exercice4_2_0 {
 		environment.addReference("oval.class", ovalClassRef);
 		environment.addReference("image.class", imageClassRef);
 		environment.addReference("label.class", stringClassRef);
-		
+
 		this.mainLoop();
 	}
-	
+
+	/**
+	 * Boucle principale de l'application, permettant de lire et exécuter les
+	 * commandes entrées par l'utilisateur.
+	 */
 	private void mainLoop() {
 		while (true) {
-			// prompt
+
 			System.out.print("> ");
-			// lecture d'une serie de s-expressions au clavier (return = fin de la serie)
 			String input = Tools.readKeyboard();
-			// creation du parser
 			SParser<SNode> parser = new SParser<>();
-			// compilation
 			List<SNode> compiled = null;
 			try {
 				compiled = parser.parse(input);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// execution des s-expressions compilees
 			Iterator<SNode> itor = compiled.iterator();
 			while (itor.hasNext()) {
 				new Interpreter().compute(environment, itor.next());
@@ -110,6 +85,11 @@ public class Exercice4_2_0 {
 		}
 	}
 
+	/**
+	 * Méthode principale, point d'entrée de l'application.
+	 * 
+	 * @param args Arguments de la ligne de commande (non utilisés).
+	 */
 	public static void main(String[] args) {
 		new Exercice4_2_0();
 	}
