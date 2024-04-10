@@ -186,6 +186,7 @@ public class ServerRobi extends Server {
             }
         }
         CommandeSocket commande=new CommandeSocket("EnvironementJson",listenv);
+        System.out.println(listenv);
         super.sendMessage(commande.Commande2Json());
     }
     public void CreateAndSendPosition() throws IOException {
