@@ -1,25 +1,32 @@
 package defalt.robiproject.algo;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat> {
-
-    private String name;
-
-    private List<EnvironnementJSONFormat> children = new ArrayList<>();
-
-    public EnvironnementJSONFormat() {
-
+public class EnvironnementJSONFormat {
+    @Override
+    public String toString() {
+        return "EnvironnementJSONFormat{" +
+                "name='" + name + '\'' +
+                ", children=" + children +
+                '}';
     }
 
+    public String name;
+
+    public List<EnvironnementJSONFormat> children = new ArrayList<>();
+
+    public EnvironnementJSONFormat() {
+    }
+
+    public EnvironnementJSONFormat(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;
@@ -37,16 +44,6 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
         this.children = children;
     }
 
-    public EnvironnementJSONFormat(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "EnvironnementJSONFormat{ name=" + name + " + children=" + children + '}';
-
-    }
-
     public void addChildren(String nameofchildren) {
         this.children.add(new EnvironnementJSONFormat(nameofchildren));
     }
@@ -54,7 +51,6 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
     public void add(String name) {
         String[] split = name.split("\\.");
         if (split.length >= 2) {
-            System.out.println(Arrays.toString(split));
             searchandadd(split[split.length - 2], split[split.length - 1]);
         }
     }
@@ -67,53 +63,18 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
             s.searchandadd(nameparent, namechildren);
         }
     }
-    @Override
-    public void write(JsonWriter out, EnvironnementJSONFormat environnement) throws IOException {
-        out.beginObject();
-        out.name("name").value(environnement.getName());
-        out.name("children");
-        writeChildren(out, environnement);
-        out.endObject();
+    public String toJson() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
+                .create();
+        return gson.toJson(this);
     }
 
-    private void writeChildren(JsonWriter out, EnvironnementJSONFormat environnement) throws IOException {
-        out.beginArray();
-        for (EnvironnementJSONFormat child : environnement.getChildren()) {
-            write(out, child);
-        }
-        out.endArray();
-    }
-
-    @Override
-    public EnvironnementJSONFormat read(JsonReader in) throws IOException {
-        if (in.peek() == JsonToken.NULL) {
-            in.nextNull();
-            return null;
-        }
-        in.beginObject();
-        EnvironnementJSONFormat environnement = new EnvironnementJSONFormat("");
-        while (in.hasNext()) {
-            switch (in.nextName()) {
-                case "name":
-                    environnement.setName(in.nextString());
-                    break;
-                case "children":
-                    in.beginArray();
-                    while (in.hasNext()) {
-                        EnvironnementJSONFormat child = read(in);
-                        if (child != null) {
-                            environnement.getChildren().add(child);
-                        }
-                    }
-                    in.endArray();
-                    break;
-                default:
-                    in.skipValue();
-                    break;
-            }
-        }
-        in.endObject();
-        return environnement;
+    public static EnvironnementJSONFormat fromJson(String json) {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
+                .create();
+        return gson.fromJson(json, EnvironnementJSONFormat.class);
     }
     public static void main(String[] args) {
         EnvironnementJSONFormat space = new EnvironnementJSONFormat("space");
@@ -121,6 +82,9 @@ public class EnvironnementJSONFormat extends TypeAdapter<EnvironnementJSONFormat
         space.add("space.ibor");
         space.add("space.robi.jsp1");
         space.add("space.jsp1.jsp2");
-        System.out.println(space);
+        String json = space.toJson();
+        System.out.println(json);
+        EnvironnementJSONFormat env=EnvironnementJSONFormat.fromJson(json);
+        System.out.println(env);
     }
 }

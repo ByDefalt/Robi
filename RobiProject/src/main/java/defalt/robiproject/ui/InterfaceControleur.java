@@ -12,6 +12,8 @@ import javafx.scene.control.Alert.AlertType;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -90,7 +92,7 @@ public class InterfaceControleur extends ClientRobi{
                 areaCommand.appendText(entreeCommand.getText() + "\n\n");
                 CommandeSocket commande = new CommandeSocket("envoyer", entreeCommand.getText());
                 super.sendMessage(commande.Commande2Json());
-                entreeCommand.setText("");
+                entreeCommand.clear();
             } catch (IOException e) {
                 showError("erreur d'envoie");
             }
@@ -176,7 +178,7 @@ public class InterfaceControleur extends ClientRobi{
                         CommandeSocket mycommande = commande.Json2Commande((String) recv);
                         switch (mycommande.getName()){
                             case "EnvironementJson":
-                                EnvironnementJSONFormat[] env=(EnvironnementJSONFormat[]) mycommande.getObject();
+                                ArrayList<EnvironnementJSONFormat> env=(ArrayList<EnvironnementJSONFormat>) mycommande.getObject();
                                 TreeConstruct(env);
                                 break;
                             case "SNodeJson":
@@ -187,7 +189,7 @@ public class InterfaceControleur extends ClientRobi{
                                 Base64ToImage(ImageBase64);
                                 break;
                             case "Position":
-                                possition = (Integer) mycommande.getObject();
+                                possition = Integer.parseInt((String) mycommande.getObject());
                                 break;
                             default:
                                 break;
@@ -228,7 +230,9 @@ public class InterfaceControleur extends ClientRobi{
                     // Convertir BufferedImage en Image de JavaFX
                     Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
                     // Créer un ImageView et l'ajouter à une scène
-                    Images.setImage(fxImage);
+                    Platform.runLater(()->{
+                        Images.setImage(fxImage);
+                    });
                 }
             } catch (IOException e) {
                 showError("Erreur lors de la reception du message");
@@ -244,7 +248,7 @@ public class InterfaceControleur extends ClientRobi{
             alert.showAndWait();
         });
     }
-    public void TreeConstruct(EnvironnementJSONFormat[] environnement){
+    public void TreeConstruct(ArrayList<EnvironnementJSONFormat> environnement){
         TreeItem<String> rootItem = new TreeItem<>("Root");
         for(EnvironnementJSONFormat env : environnement){
             TreeItem<String> newItem = new TreeItem<>(env.getName());

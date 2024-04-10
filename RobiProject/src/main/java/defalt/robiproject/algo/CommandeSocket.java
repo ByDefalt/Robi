@@ -24,12 +24,16 @@ public class CommandeSocket {
     public String Commande2Json(){
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(CommandeSocket.class, new CommandeSocketAdapter()) // Enregistrer l'adaptateur de type
+                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
+                .registerTypeAdapter(EnvironnementJSONFormat[].class, new EnvironnementJSONFormatArrayAdapter())
                 .create();
         return gson.toJson(this);
     }
     public CommandeSocket Json2Commande(String json){
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(CommandeSocket.class, new CommandeSocketAdapter())
+                .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
+                .registerTypeAdapter(EnvironnementJSONFormat[].class, new EnvironnementJSONFormatArrayAdapter())
                 .create();
         return gson.fromJson(json, CommandeSocket.class);
     }

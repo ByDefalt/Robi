@@ -29,7 +29,7 @@ public class ServerRobi extends Server {
     private final GSpace space;
     private final Environment environment = new Environment();
     private Iterator<SNode> itor;
-    private int position=-1;
+    private Integer position=-1;
 
     private final EnvironnementJSONFormat spacejson;
 
@@ -102,11 +102,13 @@ public class ServerRobi extends Server {
             try {
                 Object recv = getIn().readObject();
                 if(recv instanceof String){
-                    CommandeSocket commande=new CommandeSocket("");CommandeSocket mycommande = commande.Json2Commande((String) recv);
-                    if (commande.getName().equals("envoyer")) {code = (String) commande.getObject();
+                    CommandeSocket commande=new CommandeSocket("");
+                    CommandeSocket mycommande = commande.Json2Commande((String) recv);
+                    if (mycommande.getName().equals("envoyer")) {
+                        code = (String) mycommande.getObject();
                         compiled = parser.parse(code);
                     }else{
-                        switch (commande.getName()) {
+                        switch (mycommande.getName()) {
                             case "executer_pas":
                                 itor = compiled.iterator();
                                 if (itor.hasNext()) {
@@ -197,7 +199,28 @@ public class ServerRobi extends Server {
             return;
         }
         */
+
         ServerRobi serverRobi = new ServerRobi();
+        /*
+        EnvironnementJSONFormat space = new EnvironnementJSONFormat("space");
+        space.add("space.robi");
+        space.add("space.ibor");
+        space.add("space.robi.jsp1");
+        space.add("space.jsp1.jsp2");
+        EnvironnementJSONFormat space2 = new EnvironnementJSONFormat("space");
+        space2.add("space.robi");
+        space2.add("space.ibor");
+        space2.add("space.robi.jsp1");
+        space2.add("space.jsp1.jsp2");
+        List<EnvironnementJSONFormat> list=new ArrayList<>();
+        list.add(space);
+        list.add(space2);
+        CommandeSocket commande=new CommandeSocket("jsp",list);
+        System.out.println(commande.getObject().toString());
+        System.out.println(commande.Commande2Json());
+
+         */
+
         try {
             serverRobi.startSocket("localhost", Integer.parseInt("5555"));
             serverRobi.setClientSocket(serverRobi.accept());
@@ -216,6 +239,9 @@ public class ServerRobi extends Server {
         serverRobi.setMyThread(receiveThread);
         serverRobi.setConnection(true);
         receiveThread.start();
+
+
+
     }
 
 
