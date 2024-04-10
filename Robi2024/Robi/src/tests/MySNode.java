@@ -17,11 +17,16 @@ public class MySNode implements SNode {
         this.isLeaf = isLeaf;
         this.quote = quote;
         this.contents = contents;
-        this.children = children;
-        for (SNode child : children) {
-            child.setParent(this);
+        if (children != null) {
+            this.children = new ArrayList<>(children); // Crée une nouvelle liste contenant les mêmes éléments que la liste passée en paramètre
+            for (SNode child : this.children) {
+                child.setParent(this);
+            }
+        } else {
+            this.children = new ArrayList<>(); // Initialise une liste vide si children est null
         }
     }
+
 
     @Override
     public Boolean isLeaf() {
