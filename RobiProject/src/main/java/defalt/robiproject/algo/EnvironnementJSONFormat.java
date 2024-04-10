@@ -61,12 +61,7 @@ public class EnvironnementJSONFormat {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EnvironnementJSONFormat that = (EnvironnementJSONFormat) o;
-        return Objects.equals(name, that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, children);
+        return this.name.equals(that.name);
     }
 
     public void searchandadd(String nameparent, String namechildren) {
@@ -96,6 +91,7 @@ public class EnvironnementJSONFormat {
         space.add("space.ibor");
         space.add("space.robi.jsp1");
         space.add("space.jsp1.jsp2");
+        System.out.println(space);
         String json = space.toJson();
         System.out.println(json);
         EnvironnementJSONFormat env=EnvironnementJSONFormat.fromJson(json);
