@@ -29,6 +29,10 @@ public class Reference {
 	public void addCommand(String selector, Command primitive) {
 		this.primitives.put(selector, primitive);
 	}
+	
+	public boolean hasCommand(String selector) {
+        return this.primitives.containsKey(selector);
+    }
 
 	public Reference run(SNode method) {
 	    String methodName = method.get(1).contents();

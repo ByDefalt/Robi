@@ -45,7 +45,7 @@ import stree.parser.SParser;
 (space.robi.im translate 20 20))
 */
 public class Exercice5 {
-	Environment environment = new Environment();
+	public Environment environment = new Environment();
 	String script = "(space setDim 150 120)\n" +
             "(space add robi (rect.class new))\n" +
             "(space.robi setColor white)\n" +

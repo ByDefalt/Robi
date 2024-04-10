@@ -30,7 +30,7 @@ import tools.Tools;
 
 public class Exercice4_1_0 {
 	// Une seule variable d'instance
-	Environment environment = new Environment();
+	public Environment environment = new Environment();
 
 	public Exercice4_1_0() {
 		// space et robi sont temporaires ici

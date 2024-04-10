@@ -13,8 +13,8 @@ import stree.parser.SNode;
 import stree.parser.SParser;
 
 public class Exercice2_2_0 {
-    GSpace space = new GSpace("Exercice 2_1", new Dimension(200, 100));
-    GRect robi = new GRect();
+    public GSpace space = new GSpace("Exercice 2_1", new Dimension(200, 100));
+    public GRect robi = new GRect();
     String script = "(space setColor white) " + "(robi setColor red) " + "(robi translate 10 0) " + "(space sleep 100) " + "(robi translate 0 10) " + "(space sleep 100) " + "(robi translate -10 0) " + "(space sleep 100) " + "(robi translate 0 -10)";
 
     public Exercice2_2_0() {

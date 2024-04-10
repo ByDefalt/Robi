@@ -32,13 +32,13 @@ public class AddScript implements Command {
         Command scriptCommand = new Command() {
             public Reference run(Reference receiver, SNode method) {
                 // Pass additional parameters to the script
-                receiver.addParam("self", selfRef);
+                /*receiver.addParam("self", selfRef);
                 for (int i = 0; i < params.length; i++) {
                     receiver.addParam(Integer.toString(i), params[i]);
                 }
                 // Execute the script
                 new Interpreter().compute(environment, method.get(1));
-                return receiver;
+                return receiver;*/
             }
         };
 
