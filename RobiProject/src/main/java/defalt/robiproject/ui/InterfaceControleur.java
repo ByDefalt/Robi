@@ -1,6 +1,7 @@
 package defalt.robiproject.ui;
 
 import defalt.robiproject.algo.*;
+import defalt.robiproject.socket.Client;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -13,7 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -29,7 +29,7 @@ import javax.imageio.ImageIO;
  * @author NICOLAS Pierre
  * @author KERVRAN Maxime
  */
-public class InterfaceControleur extends ClientRobi{
+public class InterfaceControleur extends Client {
     @FXML
     private TextField entreeIp;
 

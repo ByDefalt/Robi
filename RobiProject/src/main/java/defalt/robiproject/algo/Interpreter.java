@@ -21,11 +21,11 @@ public class Interpreter {
 	 *                    exécuter.
 	 * @return La réponse produite par l'exécution de l'instruction.
 	 */
-	public Reponse compute(Environment environment, SNode next) {
+	public void compute(Environment environment, SNode next) {
 		// Vérifie si le nœud contient des enfants
 		if (!next.hasChildren()) {
 			System.out.println("Problème de syntaxe !");
-			return null;
+			return ;
 		}
 
 		String receiverName = next.get(0).contents();
@@ -36,7 +36,5 @@ public class Interpreter {
 		} else {
 			System.out.println("L'objet graphique : " + receiverName + " n'existe pas ! ");
 		}
-
-		return new Reponse(environment, next);
 	}
 }
