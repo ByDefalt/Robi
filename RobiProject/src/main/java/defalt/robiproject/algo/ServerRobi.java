@@ -1,4 +1,5 @@
 package defalt.robiproject.algo;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import defalt.robiproject.graphicLayer.*;
@@ -18,6 +19,14 @@ import java.net.SocketException;
 import java.util.*;
 import java.util.List;
 
+/**
+ * Cette classe représente le serveur pour la communication avec l'application Robi.
+ *
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
 public class ServerRobi extends Server {
 
     private Thread myThread;
@@ -36,32 +45,12 @@ public class ServerRobi extends Server {
 
     private final List<EnvironnementJSONFormat> listenv=new ArrayList<>();
 
-    public final boolean isConnected() {
-        return connection;
-    }
-
-    public final void setConnection(boolean connection) {
-        this.connection = connection;
-    }
-
-    public final Thread getMyThread() {
-        return myThread;
-    }
-
-    public final void setMyThread(Thread myThread) {
-        this.myThread = myThread;
-    }
-    public final Socket getClientSocket() {
-        return clientSocket;
-    }
-
-    public final void setClientSocket(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-    }
-
+    /**
+     * Initialise le serveur Robi.
+     */
     public ServerRobi(){
         space = new GSpace("Exercice 5", new Dimension(800, 500));
-        //space.open();
+
         Reference spaceRef = new Reference(space);
         Reference rectClassRef = new Reference(GRect.class);
         Reference ovalClassRef = new Reference(GOval.class);
@@ -94,6 +83,59 @@ public class ServerRobi extends Server {
         listenv.add(new EnvironnementJSONFormat("image.class"));
         listenv.add(new EnvironnementJSONFormat("label.class"));
     }
+
+    /**
+     * Vérifie si le serveur est connecté.
+     * @return Vrai si le serveur est connecté, sinon faux.
+     */
+    public final boolean isConnected() {
+        return connection;
+    }
+
+    /**
+     * Définit l'état de connexion du serveur.
+     * @param connection Vrai pour indiquer que le serveur est connecté, sinon faux.
+     */
+    public final void setConnection(boolean connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * Obtient le thread du serveur.
+     * @return Le thread du serveur.
+     */
+    public final Thread getMyThread() {
+        return myThread;
+    }
+
+    /**
+     * Définit le thread du serveur.
+     * @param myThread Le thread du serveur.
+     */
+    public final void setMyThread(Thread myThread) {
+        this.myThread = myThread;
+    }
+
+    /**
+     * Obtient le socket client.
+     * @return Le socket client.
+     */
+    public final Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    /**
+     * Définit le socket client.
+     * @param clientSocket Le socket client.
+     */
+    public final void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
+
+    /**
+     * Méthode principale pour recevoir les messages.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
     @Override
     public final void receiveMessage() throws IOException {
         while(true){
@@ -154,24 +196,28 @@ public class ServerRobi extends Server {
                                 }
                                 break;
 
-                                default:
-                                    break;
+                            default:
+                                break;
                         }
                         createAndSendPosition();
                         createAndSendEnvironement();
                         createAndSendImage();
                     }}
-                }catch (EOFException e){
-                    try {
-                        this.clientSocket.close(); // Fermeture de la socket côté serveur
-                    } catch (IOException ex) {
-                        ex.printStackTrace(); // Gérer les erreurs de fermeture de la socket
-                    }
-                }catch(ClassNotFoundException | IOException e) {
-                    e.printStackTrace();
+            }catch (EOFException e){
+                try {
+                    this.clientSocket.close(); // Fermeture de la socket côté serveur
+                } catch (IOException ex) {
+                    ex.printStackTrace(); // Gérer les erreurs de fermeture de la socket
                 }
+            }catch(ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
+    /**
+     * Crée et envoie une image au client.
+     */
     public void createAndSendImage(){
         BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
@@ -189,6 +235,11 @@ public class ServerRobi extends Server {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Crée et envoie l'environnement au client.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
     public void createAndSendEnvironement() throws IOException {
         for (Map.Entry<String, Reference> m : environment.getVariables().entrySet()) {
             if(!m.getKey().equals("space") && !m.getKey().equals("rect.class") && !m.getKey().equals("oval.class") && !m.getKey().equals("image.class") && !m.getKey().equals("label.class")){
@@ -196,31 +247,36 @@ public class ServerRobi extends Server {
             }
         }
         CommandeSocket commande=new CommandeSocket("EnvironementJson","List<EnvironnementJSONFormat>",listenv);
-        System.out.println(commande.Commande2Json());
         super.sendMessage(commande.Commande2Json());
     }
 
+    /**
+     * Crée et envoie un nœud SNode au client.
+     * @param sNode Le nœud SNode à envoyer.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
     public void createAndSendSNodes(SNode sNode) throws IOException {
         SNodeJSONFormat sNodeJSONFormat=new SNodeJSONFormat();
         sNodeJSONFormat = SNodeJSONFormat.copyFromSDefaultNode(sNode);
         CommandeSocket commande=new CommandeSocket("SNodeJSON","SNodeJSONFormat",sNodeJSONFormat);
         super.sendMessage(commande.Commande2Json());
     }
+
+    /**
+     * Crée et envoie la position au client.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
     public void createAndSendPosition() throws IOException {
         CommandeSocket commande=new CommandeSocket("Position","Integer",position);
         super.sendMessage(commande.Commande2Json());
     }
+
+    /**
+     * Méthode principale du serveur Robi.
+     * @param args Arguments de la ligne de commande.
+     */
     public static void main(String[] args) {
-        /*
-        if (args.length == 0) {
-            System.out.println("Usage: java ServerRobi port");
-            return;
-        }
-        */
-
         ServerRobi serverRobi = new ServerRobi();
-
-
 
         try {
             serverRobi.startSocket("localhost", Integer.parseInt("5555"));
@@ -240,10 +296,12 @@ public class ServerRobi extends Server {
         serverRobi.setMyThread(receiveThread);
         serverRobi.setConnection(true);
         receiveThread.start();
-
     }
 
-
+    /**
+     * Obtient l'espace graphique du serveur.
+     * @return L'espace graphique.
+     */
     public GSpace getSpace() {
         return space;
     }
