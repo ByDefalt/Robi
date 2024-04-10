@@ -25,8 +25,8 @@ public class Server implements SocketInterface {
 	 * 
 	 * @return le flux de sortie de l'objet serveur
 	 */
-	public ObjectOutputStream getIn() {
-		return out;
+	public ObjectInputStream getIn() {
+		return in;
 	}
 
 	/**
