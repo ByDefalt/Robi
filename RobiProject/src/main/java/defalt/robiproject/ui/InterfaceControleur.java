@@ -21,6 +21,14 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Contrôleur pour l'interface utilisateur.
+ * 
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
 public class InterfaceControleur extends ClientRobi{
     @FXML
     private TextField entreeIp;
@@ -57,6 +65,9 @@ public class InterfaceControleur extends ClientRobi{
 
     private int possition=0;
 
+    /**
+	 * Action du bouton de connexion.
+	 */
     @FXML
     private void actionBoutonConnexion() {
         if(entreeIp.getText()!=null && !entreeIp.getText().isEmpty() && entreePort.getText()!=null && !entreePort.getText().isEmpty()){
@@ -76,6 +87,10 @@ public class InterfaceControleur extends ClientRobi{
             showError("entree non valide");
         }
     }
+    
+    /**
+	 * Action du bouton de déconnexion.
+	 */
     @FXML
     private void actionBoutonDeconnexion() {
         if(IsConnected){
@@ -88,6 +103,9 @@ public class InterfaceControleur extends ClientRobi{
         }
     }
 
+    /**
+	 * Action du bouton d'envoi de commande.
+	 */
     @FXML
     private void actionBoutonEnvoyer() {
         if(IsConnected){
@@ -101,7 +119,10 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
-
+    
+	/**
+	 * Action du bouton d'ouverture de fichier.
+	 */
     @FXML
     private void actionBoutonOpen() {
         FileChooser fileChooser = new FileChooser();
@@ -120,6 +141,10 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
+
+    /**
+	 * Action du bouton d'exécution de commande.
+	 */
     @FXML
     private void actionBoutonExecution() {
         if(IsConnected){
@@ -133,6 +158,9 @@ public class InterfaceControleur extends ClientRobi{
         }
     }
 
+    /**
+	 * Action du bouton de commande précédente.
+	 */
     @FXML
     private void actionBoutonPrecedent() {
         if(IsConnected){
@@ -145,7 +173,10 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
-
+    
+	/**
+	 * Action du bouton de commande suivante.
+	 */
     @FXML
     private void actionBoutonSuivant() {
         if(IsConnected){
@@ -157,7 +188,10 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
-
+    
+	/**
+	 * Action du bouton de sortie.
+	 */
     @FXML
     private void actionBoutonQuit() {
         if(IsConnected) {
@@ -170,6 +204,10 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
+
+    /**
+	 * Méthode pour recevoir les messages du serveur.
+	 */
     @Override
     public final void receiveMessage() {
         while (!getSocket().isClosed()) {
@@ -242,6 +280,12 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
+
+    /**
+	 * Affiche une boîte de dialogue d'erreur avec le message spécifié.
+	 * 
+	 * @param message Le message d'erreur à afficher.
+	 */
     private void showError(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.ERROR);
@@ -303,6 +347,10 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
+
+    /**
+	 * Arrête le thread et la connexion.
+	 */
     public final void stopThreadAndConnection() {
             try {
                 super.stopSocket();
@@ -312,7 +360,10 @@ public class InterfaceControleur extends ClientRobi{
                 showError("Erreur lors de la fermeture de la connexion");
             }
     }
-
+    
+	/**
+	 * Initialise le contrôleur.
+	 */
     public final void initialize() {
         areaCommand.setEditable(false);
     }
