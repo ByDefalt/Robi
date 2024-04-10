@@ -257,6 +257,7 @@ public class InterfaceControleur extends ClientRobi{
         }
         Platform.runLater(()->{
             treeenvironement.setRoot(rootItem);
+            treeenvironement.getRoot().setExpanded(true);
         });
     }
 
