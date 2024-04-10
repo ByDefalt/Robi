@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Base64;
 
 import java.io.ByteArrayInputStream;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -44,6 +45,8 @@ public class InterfaceControleur extends ClientRobi{
 
     @FXML
     private TreeView treeenvironement;
+    @FXML
+    private TreeView treesnode;
 
     @FXML
     private TextArea areaSNode;
@@ -90,7 +93,8 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 areaCommand.appendText(entreeCommand.getText() + "\n\n");
-                CommandeSocket commande = new CommandeSocket("envoyer", entreeCommand.getText());
+                CommandeSocket commande = new CommandeSocket("envoyer","String" ,entreeCommand.getText());
+                System.out.println(commande.Commande2Json());
                 super.sendMessage(commande.Commande2Json());
                 entreeCommand.clear();
             } catch (IOException e) {
@@ -123,7 +127,6 @@ public class InterfaceControleur extends ClientRobi{
             try {
                 CommandeSocket commande=(checkboxPas.isSelected() ? new CommandeSocket("executer_pas") : new CommandeSocket("executer_block"));
                 possition=(checkboxPas.isSelected() ? 1 : 0);
-                areaSNode.clear();
                 super.sendMessage(commande.Commande2Json());
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -136,7 +139,7 @@ public class InterfaceControleur extends ClientRobi{
         if(IsConnected){
             try {
                 CommandeSocket commande=new CommandeSocket("precedent");
-                if(possition>1){areaSNode.clear();}
+                if(possition>1){rootItem.getChildren().clear();}
                 super.sendMessage(commande.Commande2Json());
             } catch (IOException e) {
                 showError("erreur d'envoie");
@@ -175,21 +178,23 @@ public class InterfaceControleur extends ClientRobi{
                 Object recv = getIn().readObject();
                     if(recv instanceof String){
                         CommandeSocket commande=new CommandeSocket("");
+                        System.out.println((String) recv);
                         CommandeSocket mycommande = commande.Json2Commande((String) recv);
                         switch (mycommande.getName()){
                             case "EnvironementJson":
                                 ArrayList<EnvironnementJSONFormat> env=(ArrayList<EnvironnementJSONFormat>) mycommande.getObject();
-                                TreeConstruct(env);
+                                TreeConstructEnvironnement(env);
                                 break;
-                            case "SNodeJson":
+                            case "SNodeJSON":
                                 SNodeJSONFormat snode=(SNodeJSONFormat) mycommande.getObject();
+                                TreeConstructSNodes(snode);
                                 break;
                             case "ImageBase64":
                                 String ImageBase64=(String) mycommande.getObject();
                                 Base64ToImage(ImageBase64);
                                 break;
                             case "Position":
-                                possition = Integer.parseInt((String) mycommande.getObject());
+                                possition = (Integer) mycommande.getObject();
                                 break;
                             default:
                                 break;
@@ -248,27 +253,58 @@ public class InterfaceControleur extends ClientRobi{
             alert.showAndWait();
         });
     }
-    public void TreeConstruct(ArrayList<EnvironnementJSONFormat> environnement){
-        TreeItem<String> rootItem = new TreeItem<>("Root");
-        for(EnvironnementJSONFormat env : environnement){
-            TreeItem<String> newItem = new TreeItem<>(env.getName());
-            rootItem.getChildren().add(newItem);
-            TreeAddChildren(env,newItem);
+    public void TreeConstructEnvironnement(ArrayList<EnvironnementJSONFormat> environnement){
+        if(environnement!=null) {
+            TreeItem<String> rootItem = new TreeItem<>("Root");
+            for (EnvironnementJSONFormat env : environnement) {
+                TreeItem<String> newItem = new TreeItem<>(env.getName());
+                rootItem.getChildren().add(newItem);
+                TreeAddChildrenEnvironnement(env, newItem);
+            }
+            Platform.runLater(() -> {
+                treeenvironement.setRoot(rootItem);
+                treeenvironement.getRoot().setExpanded(true);
+            });
         }
-        Platform.runLater(()->{
-            treeenvironement.setRoot(rootItem);
-            treeenvironement.getRoot().setExpanded(true);
-        });
     }
 
-    public final void TreeAddChildren(EnvironnementJSONFormat environement, TreeItem<String> Item){
+    public final void TreeAddChildrenEnvironnement(EnvironnementJSONFormat environement, TreeItem<String> Item){
         for(EnvironnementJSONFormat env :environement.getChildren()){
             TreeItem<String> newItem = new TreeItem<>(env.getName());
             Item.getChildren().add(newItem);
-            TreeAddChildren(env,newItem);
+            TreeAddChildrenEnvironnement(env,newItem);
         }
     }
 
+
+
+    TreeItem<String> rootItem = new TreeItem<>("Root");
+
+    public void TreeConstructSNodes(SNodeJSONFormat sNodeJSONFormat){
+        if(sNodeJSONFormat!=null) {
+            TreeItem<String> newItem = new TreeItem<>(sNodeJSONFormat.getCommandeChildren());
+            rootItem.getChildren().add(newItem);
+            TreeAddChildrenSNodes(sNodeJSONFormat,newItem);
+            Platform.runLater(() -> {
+                //rootItem.getChildren().clear();
+                treesnode.setRoot(rootItem);
+                treesnode.getRoot().setExpanded(true);
+            });
+        }
+    }
+
+    public final void TreeAddChildrenSNodes(SNodeJSONFormat sNodeJSONFormat, TreeItem<String> Item){
+        if(!sNodeJSONFormat.getChildren().isEmpty()) {
+            int a = 1;
+            for (SNodeJSONFormat sNodeJSONFormat2 : sNodeJSONFormat.getChildren()) {
+                if (Objects.equals(sNodeJSONFormat2.getCommandname(), "null")) {
+                    TreeItem<String> newItem2 = new TreeItem<>("\""+(a++) + "\" " + sNodeJSONFormat2.getCommandeChildren());
+                    Item.getChildren().add(newItem2);
+                    TreeAddChildrenSNodes(sNodeJSONFormat2,newItem2);
+                }
+            }
+        }
+    }
     public final void stopThreadAndConnection() {
             try {
                 super.stopSocket();
@@ -281,6 +317,5 @@ public class InterfaceControleur extends ClientRobi{
 
     public final void initialize() {
         areaCommand.setEditable(false);
-        areaSNode.setEditable(false);
     }
 }

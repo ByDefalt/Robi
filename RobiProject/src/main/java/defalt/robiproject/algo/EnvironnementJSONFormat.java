@@ -87,7 +87,7 @@ public class EnvironnementJSONFormat {
                 .create();
         return gson.fromJson(json, EnvironnementJSONFormat.class);
     }
-    
+
     public static void main(String[] args) {
         EnvironnementJSONFormat space=new EnvironnementJSONFormat("space");
         space.add("space.robi");

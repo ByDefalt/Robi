@@ -2,6 +2,7 @@ package defalt.robiproject.algo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import defalt.robiproject.graphicLayer.*;
+import defalt.robiproject.parser.SDefaultNode;
 import defalt.robiproject.parser.SNode;
 import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
@@ -107,19 +108,24 @@ public class ServerRobi extends Server {
                     if (mycommande.getName().equals("envoyer")) {
                         code = (String) mycommande.getObject();
                         compiled = parser.parse(code);
+                        createAndSendEnvironement();
                     }else{
                         switch (mycommande.getName()) {
                             case "executer_pas":
                                 itor = compiled.iterator();
                                 if (itor.hasNext()) {
-                                    new Interpreter().compute(environment, itor.next());
+                                    SNode sNode= itor.next();
+                                    new Interpreter().compute(environment, sNode);
+                                    createAndSendSNodes(sNode);
                                     position = 1;
                                 }
                                 break;
                             case "executer_block":
                                 itor = compiled.iterator();
                                 while (itor.hasNext()) {
-                                    new Interpreter().compute(environment, itor.next());
+                                    SNode sNode= itor.next();
+                                    new Interpreter().compute(environment, sNode);
+                                    createAndSendSNodes(sNode);
                                 }
                                 break;
                             case "precedent":
@@ -130,7 +136,9 @@ public class ServerRobi extends Server {
                                     position--;
                                     for (int i = 1; i <= position; i++) {
                                         if (itor.hasNext()) {
-                                            new Interpreter().compute(environment, itor.next());
+                                            SNode sNode= itor.next();
+                                            new Interpreter().compute(environment, sNode);
+                                            createAndSendSNodes(sNode);
                                         }
                                     }
                                 }
@@ -138,7 +146,9 @@ public class ServerRobi extends Server {
                             case "suivant":
                                 if(position!=0) {
                                     if (itor.hasNext()) {
-                                        new Interpreter().compute(environment, itor.next());
+                                        SNode sNode= itor.next();
+                                        new Interpreter().compute(environment, sNode);
+                                        createAndSendSNodes(sNode);
                                         position++;
                                     }
                                 }
@@ -173,7 +183,7 @@ public class ServerRobi extends Server {
             ImageIO.write(image, "png", baos);
             byte[] imageBytes = baos.toByteArray();
             base64Image = Base64.getEncoder().encodeToString(imageBytes);
-            CommandeSocket commande=new CommandeSocket("ImageBase64",base64Image);
+            CommandeSocket commande=new CommandeSocket("ImageBase64","String",base64Image);
             super.sendMessage(commande.Commande2Json());
         } catch (IOException e) {
             e.printStackTrace();
@@ -185,11 +195,19 @@ public class ServerRobi extends Server {
                 spacejson.add(m.getKey());
             }
         }
-        CommandeSocket commande=new CommandeSocket("EnvironementJson",listenv);
+        CommandeSocket commande=new CommandeSocket("EnvironementJson","List<EnvironnementJSONFormat>",listenv);
+        System.out.println(commande.Commande2Json());
+        super.sendMessage(commande.Commande2Json());
+    }
+
+    public void createAndSendSNodes(SNode sNode) throws IOException {
+        SNodeJSONFormat sNodeJSONFormat=new SNodeJSONFormat();
+        sNodeJSONFormat = SNodeJSONFormat.copyFromSDefaultNode(sNode);
+        CommandeSocket commande=new CommandeSocket("SNodeJSON","SNodeJSONFormat",sNodeJSONFormat);
         super.sendMessage(commande.Commande2Json());
     }
     public void createAndSendPosition() throws IOException {
-        CommandeSocket commande=new CommandeSocket("Position",position);
+        CommandeSocket commande=new CommandeSocket("Position","Integer",position);
         super.sendMessage(commande.Commande2Json());
     }
     public static void main(String[] args) {
@@ -201,25 +219,8 @@ public class ServerRobi extends Server {
         */
 
         ServerRobi serverRobi = new ServerRobi();
-        /*
-        EnvironnementJSONFormat space = new EnvironnementJSONFormat("space");
-        space.add("space.robi");
-        space.add("space.ibor");
-        space.add("space.robi.jsp1");
-        space.add("space.jsp1.jsp2");
-        EnvironnementJSONFormat space2 = new EnvironnementJSONFormat("space");
-        space2.add("space.robi");
-        space2.add("space.ibor");
-        space2.add("space.robi.jsp1");
-        space2.add("space.jsp1.jsp2");
-        List<EnvironnementJSONFormat> list=new ArrayList<>();
-        list.add(space);
-        list.add(space2);
-        CommandeSocket commande=new CommandeSocket("jsp",list);
-        System.out.println(commande.getObject().toString());
-        System.out.println(commande.Commande2Json());
 
-         */
+
 
         try {
             serverRobi.startSocket("localhost", Integer.parseInt("5555"));
@@ -239,8 +240,6 @@ public class ServerRobi extends Server {
         serverRobi.setMyThread(receiveThread);
         serverRobi.setConnection(true);
         receiveThread.start();
-
-
 
     }
 

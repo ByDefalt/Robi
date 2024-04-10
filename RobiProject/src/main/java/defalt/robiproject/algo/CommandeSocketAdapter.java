@@ -1,6 +1,7 @@
 package defalt.robiproject.algo;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import defalt.robiproject.algo.CommandeSocket;
 import defalt.robiproject.algo.EnvironnementJSONFormat;
 
@@ -13,24 +14,15 @@ public class CommandeSocketAdapter implements JsonSerializer<CommandeSocket>, Js
     public JsonElement serialize(CommandeSocket src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", src.getName());
+        jsonObject.addProperty("type", src.getType());
 
         Object object = src.getObject();
         if (object != null) {
             if (object instanceof String || object instanceof Integer) {
                 jsonObject.addProperty("object", object.toString());
-            } else if (object instanceof EnvironnementJSONFormat) {
+            } else if (object instanceof SNodeJSONFormat || object instanceof List<?>) {
                 JsonElement element = context.serialize(object);
-                System.out.println(element);
                 jsonObject.add("object", element);
-            }if (object instanceof List<?>) {
-                JsonArray environmentsArray = new JsonArray();
-                for (Object env : (List<?>) object) {
-                    if (env instanceof EnvironnementJSONFormat) {
-                        JsonElement element = context.serialize(env);
-                        environmentsArray.add(element);
-                    }
-                }
-                jsonObject.add("object", environmentsArray);
             }
         }
 
@@ -41,29 +33,25 @@ public class CommandeSocketAdapter implements JsonSerializer<CommandeSocket>, Js
     @Override
     public CommandeSocket deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
-        String name = jsonObject.get("name").getAsString();
+        String name = jsonObject.has("name") ? jsonObject.get("name").getAsString() : null;
+        String type = jsonObject.has("type") ? jsonObject.get("type").getAsString() : null;
 
+        JsonElement objectElement = jsonObject.get("object");
         Object object = null;
-        if (jsonObject.has("object")) {
-            JsonElement objectElement = jsonObject.get("object");
-            if (objectElement.isJsonPrimitive()) {
-                // Si l'élément est une valeur primitive
-                object = objectElement.getAsString();
-            } else if (objectElement.isJsonObject()) {
-                // Si l'élément est un objet JSON (EnvironnementJSONFormat)
-                object = context.deserialize(objectElement, EnvironnementJSONFormat.class);
-            } else if (objectElement.isJsonArray()) {
-                // Si l'élément est un tableau JSON (List<EnvironnementJSONFormat>)
-                List<EnvironnementJSONFormat> environments = new ArrayList<>();
-                JsonArray environmentsArray = objectElement.getAsJsonArray();
-                for (JsonElement element : environmentsArray) {
-                    EnvironnementJSONFormat environment = context.deserialize(element, EnvironnementJSONFormat.class);
-                    environments.add(environment);
+        if (objectElement != null) {
+            if (type != null) {
+                if (type.equals("String")) {
+                    object = objectElement.getAsString();
+                } else if (type.equals("Integer")) {
+                    object = objectElement.getAsInt();
+                } else if (type.equals("SNodeJSONFormat")) {
+                    object = context.deserialize(objectElement, SNodeJSONFormat.class);
+                } else if (type.equals("List<EnvironnementJSONFormat>")) {
+                    object = context.deserialize(objectElement, new TypeToken<List<EnvironnementJSONFormat>>(){}.getType());
                 }
-                object = environments;
             }
         }
 
-        return new CommandeSocket(name, object);
+        return new CommandeSocket(name, type, object);
     }
 }

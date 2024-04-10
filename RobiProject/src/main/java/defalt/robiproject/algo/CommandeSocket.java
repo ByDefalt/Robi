@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 
 public class CommandeSocket {
     private String name;
+    private String type;
     private Object object;
-    public  CommandeSocket(String name,Object object){
+    public  CommandeSocket(String name,String type,Object object){
         this.name=name;
+        this.type=type;
         this.object=object;
     }
     public  CommandeSocket(String name){
@@ -26,6 +28,7 @@ public class CommandeSocket {
                 .registerTypeAdapter(CommandeSocket.class, new CommandeSocketAdapter()) // Enregistrer l'adaptateur de type
                 .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
                 .registerTypeAdapter(EnvironnementJSONFormat[].class, new EnvironnementJSONFormatArrayAdapter())
+                .registerTypeAdapter(SNodeJSONFormat.class, new SNodeJSONFormatAdapter())
                 .create();
         return gson.toJson(this);
     }
@@ -34,7 +37,12 @@ public class CommandeSocket {
                 .registerTypeAdapter(CommandeSocket.class, new CommandeSocketAdapter())
                 .registerTypeAdapter(EnvironnementJSONFormat.class, new EnvironnementJSONFormatAdapter())
                 .registerTypeAdapter(EnvironnementJSONFormat[].class, new EnvironnementJSONFormatArrayAdapter())
+                .registerTypeAdapter(SNodeJSONFormat.class, new SNodeJSONFormatAdapter())
                 .create();
         return gson.fromJson(json, CommandeSocket.class);
+    }
+
+    public String getType() {
+        return type;
     }
 }
