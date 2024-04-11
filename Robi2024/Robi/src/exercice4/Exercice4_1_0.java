@@ -82,7 +82,7 @@ public class Exercice4_1_0 {
 		}
 	}
 
-	private void run(SNode expr) {
+	public void run(SNode expr) {
 		// quel est le nom du receiver
 		String receiverName = expr.get(0).contents();
 		// quel est le receiver
