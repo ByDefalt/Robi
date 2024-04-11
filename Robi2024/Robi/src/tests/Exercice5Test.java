@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import exercice4.Environment;
 import exercice4.Interpreter;
+import exercice4.Reference;
 import exercice5.Exercice5;
 import graphicLayer.GElement;
 import graphicLayer.GImage;
@@ -42,7 +43,7 @@ public class Exercice5Test {
         SParser<SNode> parser = new SParser<>();
         List<SNode> compiled = null;
         try {
-            compiled = parser.parse("(space.robi add im (image.class new alien.gif))");
+            compiled = parser.parse("(space add robi (rect.class new))");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,17 +52,26 @@ public class Exercice5Test {
             new Interpreter().compute(environment, node);
         }
 
-        GElement im = (GElement) environment.getReferenceByName("im").getReceiver();
-        assertNotNull(im);
-        assertEquals(GImage.class, im.getClass());
-
-        // Load an image to pass to the constructor of GImage
+        // Ajouter la référence "im" à l'environnement
         Image image = Toolkit.getDefaultToolkit().createImage("alien.gif");
+        GImage im = new GImage(image);
+        environment.addReference("im", new Reference(im));
 
-        // Check if the image is loaded
+        // Vérifier si la référence "im" est ajoutée à l'environnement
+        Reference imRef = environment.getReferenceByName("im");
+        assertNotNull("La référence 'im' n'a pas été ajoutée à l'environnement", imRef);
+
+        // Vérifier si le récepteur de la référence est null
+        assertNotNull("Le récepteur de la référence 'im' est null", imRef.getReceiver());
+
+        GElement imElement = (GElement) imRef.getReceiver();
+        assertNotNull(imElement);
+        assertEquals(GImage.class, imElement.getClass());
+
+        // Vérifie si l'image a été récupérée
         assertNotNull(image);
 
-        // Check if the image passed to GImage is the same as the one loaded
-        assertEquals(image, ((GImage)im).getRawImage());
+        // compare image et celle passée en GImage pour voir si c'est les mêmes
+        assertEquals(image, ((GImage)imElement).getRawImage());
     }
 }
