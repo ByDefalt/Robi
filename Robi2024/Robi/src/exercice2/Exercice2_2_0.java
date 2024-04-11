@@ -23,23 +23,9 @@ import stree.parser.SParser;
  * @author KERVRAN Maxime
  */
 public class Exercice2_2_0 {
-<<<<<<< HEAD
     public GSpace space = new GSpace("Exercice 2_1", new Dimension(200, 100));
     public GRect robi = new GRect();
     String script = "(space setColor white) " + "(robi setColor red) " + "(robi translate 10 0) " + "(space sleep 100) " + "(robi translate 0 10) " + "(space sleep 100) " + "(robi translate -10 0) " + "(space sleep 100) " + "(robi translate 0 -10)";
-=======
-    GSpace space = new GSpace("Exercice 2_1", new Dimension(200, 100));
-    GRect robi = new GRect();
-    String script = "(space setColor white) " +
-                    "(robi setColor red) " +
-                    "(robi translate 10 0) " +
-                    "(space sleep 100) " +
-                    "(robi translate 0 10) " +
-                    "(space sleep 100) " +
-                    "(robi translate -10 0) " +
-                    "(space sleep 100) " +
-                    "(robi translate 0 -10)";
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
 
     /**
      * Constructeur de la classe Exercice2_2_0. Initialise l'espace graphique, le

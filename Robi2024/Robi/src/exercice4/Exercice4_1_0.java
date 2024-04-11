@@ -73,18 +73,13 @@ public class Exercice4_1_0 {
 			}
 		}
 	}
-
-<<<<<<< HEAD
-	public void run(SNode expr) {
-		// quel est le nom du receiver
-=======
+	
 	/**
 	 * Méthode pour exécuter une s-expression.
 	 * 
 	 * @param expr La s-expression à exécuter.
 	 */
-	private void run(SNode expr) {
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
+	public void run(SNode expr) {
 		String receiverName = expr.get(0).contents();
 		Reference receiver = environment.getReferenceByName(receiverName);
 		receiver.run(expr);

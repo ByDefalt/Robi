@@ -53,26 +53,6 @@ public class AddElement implements Command {
 		return null;
 	}
 
-<<<<<<< HEAD
-    public Command getNewElementCommand(Reference refElementClass, String elementType) {
-        switch (elementType) {
-            case "GRect":
-                return (NewElement) this.environment.getReferenceByName("rect.class").getCommandByName("new");
-            case "GOval":
-                return (NewElement) this.environment.getReferenceByName("oval.class").getCommandByName("new");
-            case "rect.class":
-                return (NewElement) refElementClass.getCommandByName("new");
-            case "oval.class":
-                return (NewElement) refElementClass.getCommandByName("new");
-            case "image.class":
-                return (NewImage) refElementClass.getCommandByName("new");
-            case "label.class":
-                return (NewString) refElementClass.getCommandByName("new");
-            default:
-                return null;
-        }
-    }
-=======
 	/**
 	 * Obtient la commande pour créer un nouvel élément graphique.
 	 * 
@@ -98,5 +78,4 @@ public class AddElement implements Command {
 			return null;
 		}
 	}
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
 }

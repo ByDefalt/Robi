@@ -66,25 +66,6 @@ public class Exercice2_1_0 {
 				String propriete = children.get(1).contents();
 				String valeur = children.get(2).contents();
 
-<<<<<<< HEAD
-	    private Color getColorFromString(String colorStr) {
-	        switch (colorStr) {
-	            case "black":
-	                return Color.BLACK;
-	            case "yellow":
-	                return Color.YELLOW;
-	            case "white":
-	                return Color.WHITE;
-	            case "red":
-	                return Color.RED;
-	            default:
-	                return null;
-	        }
-	    }
-
-	public static void main(String[] args) {
-		new Exercice2_1_0();
-=======
 				switch (cible) {
 				case "space":
 					if (propriete.equals("setColor")) {
@@ -99,7 +80,6 @@ public class Exercice2_1_0 {
 				}
 			}
 		}
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
 	}
 
 	/**
@@ -129,3 +109,4 @@ public class Exercice2_1_0 {
 		new Exercice2_1_0(); 
 	}
 }
+

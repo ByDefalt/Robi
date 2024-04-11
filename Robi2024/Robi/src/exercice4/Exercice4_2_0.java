@@ -25,13 +25,8 @@ import tools.Tools;
  * @author KERVRAN Maxime
  */
 public class Exercice4_2_0 {
-<<<<<<< HEAD
 	// Une seule variable d'instance
 	public Environment environment = new Environment();
-=======
-
-	Environment environment = new Environment();
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
 
 	/**
 	 * Constructeur de la classe Exercice4_2_0.

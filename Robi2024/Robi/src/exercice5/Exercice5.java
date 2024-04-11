@@ -103,7 +103,7 @@ public class Exercice5 {
         SParser<SNode> parser = new SParser<>();
         List<SNode> compiled;
         try {
-            compiled = parser.parse(script2);
+            compiled = parser.parse(script);
             Iterator<SNode> itor = compiled.iterator();
             while (itor.hasNext()) {
                 new Interpreter().compute(environment, itor.next());

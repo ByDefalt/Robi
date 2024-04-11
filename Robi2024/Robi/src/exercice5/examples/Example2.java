@@ -12,10 +12,6 @@ public class Example2 {
 	 * Le constructeur de fonctionne pas car je n'ai pas pu faire en sorte d'ajouter un script à une reference de classe
 	 * De plus, l'opérateur return (le ^) n'est pas du tout mis en oeuvre
 	 * 
-	 * Pour permettre à ce type de script de fonctionner, il faudrait revoir la conception de la façon suivante :
-	 * bla bla constructeur bla bla
-	 * bla bla bla le return (^) pourrait être naturellement traité par l'interpréteur bla bla 
-	 * 
 	 */
 	String script = "" 
 			+ " (script ( "

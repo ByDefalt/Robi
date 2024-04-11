@@ -21,7 +21,6 @@ import stree.parser.SParser;
  * @author KERVRAN Maxime
  */
 public class Exercice3_0 {
-<<<<<<< HEAD
 	public GSpace space = new GSpace("Exercice 3", new Dimension(200, 100));
 	public GRect robi = new GRect();
 	String script = "" +
@@ -39,26 +38,7 @@ public class Exercice3_0 {
 	"	(robi translate -100 0)\n" + 
 	"	(space sleep 1000)\n" + 
 	"	(robi translate 0 -40)";
-=======
-    GSpace space = new GSpace("Exercice 3", new Dimension(200, 100));
-    GRect robi = new GRect();
-    String script = "" +
-            "   (space setColor black) " +
-            "   (robi setColor yellow)" +
-            "   (space sleep 1000)" +
-            "   (space setColor white)\n" + 
-            "   (space sleep 1000)" +
-            "	(robi setColor red) \n" + 
-            "   (space sleep 1000)" +
-            "	(robi translate 100 0)\n" + 
-            "	(space sleep 1000)\n" + 
-            "	(robi translate 0 50)\n" + 
-            "	(space sleep 1000)\n" + 
-            "	(robi translate -100 0)\n" + 
-            "	(space sleep 1000)\n" + 
-            "	(robi translate 0 -40)";
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
-
+	
     /**
      * Initialise l'exercice 3.0.
      */

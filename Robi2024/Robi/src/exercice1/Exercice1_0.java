@@ -17,15 +17,9 @@ import graphicLayer.GSpace;
  * @author KERVRAN Maxime
  */
 public class Exercice1_0 {
-<<<<<<< HEAD
     public GSpace space;
     public GRect robi;
     int speed = 1;
-=======
-  GSpace space;
-  GRect robi;
-  int speed = 1;
->>>>>>> 1a688b8e99892dffe5cd195b5dbd9c3d807d036c
 
   /**
    * Constructeur de la classe Exercice1_0. Initialise l'espace graphique et le
