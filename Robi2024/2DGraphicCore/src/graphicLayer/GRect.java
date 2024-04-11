@@ -3,6 +3,7 @@ package graphicLayer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Stroke;
 
@@ -62,6 +63,15 @@ public class GRect extends GBounded {
 		g.setStroke(previousStroke);
 		
 		drawContents(g);
+	}
+	
+	public Color getColor() {
+	    return color;
+	}
+	
+	public Point recupPosition() {
+	    Rectangle bounds = getBounds();
+	    return new Point(bounds.x, bounds.y);
 	}
 
 	

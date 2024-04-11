@@ -30,7 +30,7 @@ import tools.Tools;
 
 public class Exercice4_1_0 {
 	// Une seule variable d'instance
-	Environment environment = new Environment();
+	public Environment environment = new Environment();
 
 	public Exercice4_1_0() {
 		// space et robi sont temporaires ici
@@ -82,7 +82,7 @@ public class Exercice4_1_0 {
 		}
 	}
 
-	private void run(SNode expr) {
+	public void run(SNode expr) {
 		// quel est le nom du receiver
 		String receiverName = expr.get(0).contents();
 		// quel est le receiver

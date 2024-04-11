@@ -17,4 +17,12 @@ public class Environment {
 	public Reference getReferenceByName(String name) {
 		return this.variables.get(name);
 	}
+
+	public Map<String, Reference> getVariables() {
+		return this.variables;
+	}
+
+	public void removeReference(String name) {
+		this.variables.remove(name);
+	}
 }

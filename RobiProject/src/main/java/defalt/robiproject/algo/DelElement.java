@@ -15,6 +15,8 @@ public class DelElement implements Command {
             if (RefElement != null) {
 	            GSpace space = (GSpace) receiver.getReceiver();
 	            space.removeElement((GElement) RefElement.getReceiver());
+                this.environment.removeReference(method.get(0).contents() + "." + method.get(2).contents());
+                this.environment.removeReference(method.get(2).contents());
 	            return receiver;
             } else {
                 System.out.println("Element introuvable ");

@@ -53,7 +53,7 @@ import tools.Tools;
 
 public class Exercice4_2_0 {
 	// Une seule variable d'instance
-	Environment environment = new Environment();
+	public Environment environment = new Environment();
 
 	public Exercice4_2_0() {
 		GSpace space = new GSpace("Exercice 4", new Dimension(200, 100));

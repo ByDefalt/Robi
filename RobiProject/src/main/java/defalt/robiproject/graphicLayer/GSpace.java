@@ -31,6 +31,7 @@ public class GSpace extends JPanel implements GContainer, KeyListener, MouseList
 		super.addKeyListener(this);
 		super.addMouseListener(this);
 		this.setPreferredSize(dim);
+		super.setSize(dim);
 	}
 
 	public List<GElement> contents() {
@@ -39,8 +40,9 @@ public class GSpace extends JPanel implements GContainer, KeyListener, MouseList
 
 	public void changeWindowSize(Dimension dim) {
 		this.setPreferredSize(dim);
-		JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
-		frame.pack();
+		super.setSize(dim);
+		//JFrame frame = (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, this);
+		//frame.pack();
 	}
 	
 	public void open() {

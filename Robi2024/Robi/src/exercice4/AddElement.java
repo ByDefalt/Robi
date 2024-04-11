@@ -34,7 +34,7 @@ public class AddElement implements Command {
         return null;
     }
 
-    private Command getNewElementCommand(Reference refElementClass, String elementType) {
+    public Command getNewElementCommand(Reference refElementClass, String elementType) {
         switch (elementType) {
             case "GRect":
                 return (NewElement) this.environment.getReferenceByName("rect.class").getCommandByName("new");
