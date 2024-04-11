@@ -133,8 +133,11 @@ public class ServerRobi extends Server {
     }
 
     /**
-     * Méthode principale pour recevoir les messages.
-     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     * Méthode permettant de recevoir et de traiter les messages entrants depuis le client.
+     * La méthode reste en attente de messages en boucle, traitant chaque message reçu en fonction de son contenu.
+     * Les différentes commandes sont interprétées et exécutées en conséquence.
+     *
+     * @throws IOException Si une erreur survient lors de la lecture ou du traitement du message.
      */
     @Override
     public final void receiveMessage() throws IOException {
