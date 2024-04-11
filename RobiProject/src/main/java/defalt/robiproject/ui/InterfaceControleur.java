@@ -1,9 +1,7 @@
 package defalt.robiproject.ui;
 
-import com.google.gson.GsonBuilder;
-import defalt.robiproject.algo.CommandeSocketTypeAdapter;
-import defalt.robiproject.algo.Reponse;
-import defalt.robiproject.parser.SNode;
+import defalt.robiproject.algo.*;
+import defalt.robiproject.socket.Client;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
@@ -15,20 +13,23 @@ import javafx.scene.control.Alert.AlertType;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Base64;
 
 import java.io.ByteArrayInputStream;
-import java.util.List;
-
-
-import com.google.gson.Gson;
-
-import defalt.robiproject.algo.ClientRobi;
-import defalt.robiproject.algo.CommandeSocket;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
-public class InterfaceControleur extends ClientRobi{
+/**
+ * Contrôleur pour l'interface utilisateur.
+ * 
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
+public class InterfaceControleur extends Client {
     @FXML
     private TextField entreeIp;
 
@@ -52,6 +53,8 @@ public class InterfaceControleur extends ClientRobi{
 
     @FXML
     private TreeView treeenvironement;
+    @FXML
+    private TreeView treesnode;
 
     @FXML
     private TextArea areaSNode;
@@ -62,6 +65,9 @@ public class InterfaceControleur extends ClientRobi{
 
     private int possition=0;
 
+    /**
+	 * Action du bouton de connexion.
+	 */
     @FXML
     private void actionBoutonConnexion() {
         if(entreeIp.getText()!=null && !entreeIp.getText().isEmpty() && entreePort.getText()!=null && !entreePort.getText().isEmpty()){
@@ -81,6 +87,10 @@ public class InterfaceControleur extends ClientRobi{
             showError("entree non valide");
         }
     }
+    
+    /**
+	 * Action du bouton de déconnexion.
+	 */
     @FXML
     private void actionBoutonDeconnexion() {
         if(IsConnected){
@@ -93,30 +103,26 @@ public class InterfaceControleur extends ClientRobi{
         }
     }
 
+    /**
+	 * Action du bouton d'envoi de commande.
+	 */
     @FXML
     private void actionBoutonEnvoyer() {
         if(IsConnected){
             try {
                 areaCommand.appendText(entreeCommand.getText() + "\n\n");
-                // Créer l'instance Gson en utilisant un GsonBuilder
-                Gson gson = new GsonBuilder()
-                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
-                        .create();
-                // Créer l'objet CommandeSocket
-                CommandeSocket commande = new CommandeSocket("envoyer", entreeCommand.getText());
-
-                // Convertir l'objet CommandeSocket en JSON en utilisant Gson avec l'adaptateur de type personnalisé
-                String json = gson.toJson(commande);
-
-                // Envoyer le JSON
-                super.sendMessage(json);
-                entreeCommand.setText("");
+                CommandeSocket commande = new CommandeSocket("envoyer","String" ,entreeCommand.getText());
+                super.sendMessage(commande.Commande2Json());
+                entreeCommand.clear();
             } catch (IOException e) {
                 showError("erreur d'envoie");
             }
         }
     }
-
+    
+	/**
+	 * Action du bouton d'ouverture de fichier.
+	 */
     @FXML
     private void actionBoutonOpen() {
         FileChooser fileChooser = new FileChooser();
@@ -135,58 +141,57 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
+
+    /**
+	 * Action du bouton d'exécution de commande.
+	 */
     @FXML
     private void actionBoutonExecution() {
         if(IsConnected){
             try {
                 CommandeSocket commande=(checkboxPas.isSelected() ? new CommandeSocket("executer_pas") : new CommandeSocket("executer_block"));
                 possition=(checkboxPas.isSelected() ? 1 : 0);
-                Gson gson = new GsonBuilder()
-                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
-                        .create();
-                String json = gson.toJson(commande);
-                areaSNode.clear();
-                areaEnvironment.clear();
-                super.sendMessage(json);
+                super.sendMessage(commande.Commande2Json());
             } catch (IOException e) {
                 showError("erreur d'envoie");
             }
         }
     }
 
+    /**
+	 * Action du bouton de commande précédente.
+	 */
     @FXML
     private void actionBoutonPrecedent() {
         if(IsConnected){
             try {
                 CommandeSocket commande=new CommandeSocket("precedent");
-                Gson gson = new GsonBuilder()
-                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
-                        .create();
-                String json = gson.toJson(commande);
-                if(possition>1){areaSNode.clear();}
-                super.sendMessage(json);
+                if(possition>1){rootItem.getChildren().clear();}
+                super.sendMessage(commande.Commande2Json());
             } catch (IOException e) {
                 showError("erreur d'envoie");
             }
         }
     }
-
+    
+	/**
+	 * Action du bouton de commande suivante.
+	 */
     @FXML
     private void actionBoutonSuivant() {
         if(IsConnected){
             try {
                 CommandeSocket commande=new CommandeSocket("suivant");
-                Gson gson = new GsonBuilder()
-                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
-                        .create();
-                String json = gson.toJson(commande);
-                super.sendMessage(json);
+                super.sendMessage(commande.Commande2Json());
             } catch (IOException e) {
                 showError("erreur d'envoie");
             }
         }
     }
-
+    
+	/**
+	 * Action du bouton de sortie.
+	 */
     @FXML
     private void actionBoutonQuit() {
         if(IsConnected) {
@@ -199,43 +204,39 @@ public class InterfaceControleur extends ClientRobi{
             }
         }
     }
+
+    /**
+	 * Méthode pour recevoir les messages du serveur.
+	 */
     @Override
     public final void receiveMessage() {
         while (!getSocket().isClosed()) {
             try {
                 Object recv = getIn().readObject();
-                if (recv != null) {
-                    if (recv instanceof String) {
-                        String recvString = (String) recv;
-                        byte[] imageBytes = Base64.getDecoder().decode(recvString);
-                        if (imageBytes.length == 0) {
-                            showError("Erreur lors de la reception du message");
-                        } else {
-                            try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
-                                BufferedImage bufferedImage = ImageIO.read(bis);
-
-                                if (bufferedImage == null) {
-                                    showError("Erreur lors de la reception du message");
-                                } else {
-                                    // Convertir BufferedImage en Image de JavaFX
-                                    Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
-                                    Images.setImage(null);
-                                    // Créer un ImageView et l'ajouter à une scène
-                                    Images.setImage(fxImage);
-                                }
-                            } catch (IOException e) {
-                                showError("Erreur lors de la reception du message");
-                            }
+                    if(recv instanceof String){
+                        CommandeSocket commande=new CommandeSocket("");
+                        CommandeSocket mycommande = commande.Json2Commande((String) recv);
+                        switch (mycommande.getName()){
+                            case "EnvironementJson":
+                                ArrayList<EnvironnementJSONFormat> env=(ArrayList<EnvironnementJSONFormat>) mycommande.getObject();
+                                TreeConstructEnvironnement(env);
+                                break;
+                            case "SNodeJSON":
+                                SNodeJSONFormat snode=(SNodeJSONFormat) mycommande.getObject();
+                                TreeConstructSNodes(snode);
+                                break;
+                            case "ImageBase64":
+                                String ImageBase64=(String) mycommande.getObject();
+                                Base64ToImage(ImageBase64);
+                                break;
+                            case "Position":
+                                possition = (Integer) mycommande.getObject();
+                                break;
+                            default:
+                                break;
                         }
                     }
-                    if (recv instanceof Reponse) {
-                        this.setEnvironmentsSNodes((Reponse) recv);
-                    }
-                    if (recv instanceof Integer){
-                        possition = (Integer) recv;
-                    }
-                }
-            } catch (EOFException e) {
+            }catch (EOFException e) {
                 // Cette exception est levée lorsque le serveur ferme la connexion
                 Platform.runLater(() -> {labelEtatConnexion.setText("Deconnexion server");});
                 // Traiter la fermeture de la connexion du serveur
@@ -245,26 +246,46 @@ public class InterfaceControleur extends ClientRobi{
                 // Traiter la fermeture de la connexion du client
             } catch (IOException e) {
                 // Cette exception est levée pour d'autres erreurs d'entrée/sortie
-                System.out.println("Une erreur d'entrée/sortie s'est produite : " + e.getMessage());
+                Platform.runLater(() -> {labelEtatConnexion.setText("Une erreur d'entrée/sortie s'est produite");});
                 // Traiter l'erreur d'entrée/sortie
             } catch (ClassNotFoundException e) {
                 // Cette exception est levée si la classe de l'objet reçu n'a pas été trouvée
-                System.out.println("Classe non trouvée lors de la réception des données : " + e.getMessage());
+                Platform.runLater(() -> {labelEtatConnexion.setText("Une erreur d'entrée s'est produite");});
                 // Traiter l'erreur de classe non trouvée
             }
         }
     }
 
-    private void setEnvironmentsSNodes(Reponse reponse) {
-        this.areaEnvironment.clear();
-        for(String text : reponse.getEnvironment()) {
-            this.areaEnvironment.appendText(text + "\n");
-        }
 
-        areaSNode.appendText(reponse.getSNode());
+    private void Base64ToImage(String base64){
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        if (imageBytes.length == 0) {
+            showError("Erreur lors de la reception du message");
+        } else {
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
+                BufferedImage bufferedImage = ImageIO.read(bis);
+
+                if (bufferedImage == null) {
+                    showError("Erreur lors de la reception du message");
+                } else {
+                    // Convertir BufferedImage en Image de JavaFX
+                    Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
+                    // Créer un ImageView et l'ajouter à une scène
+                    Platform.runLater(()->{
+                        Images.setImage(fxImage);
+                    });
+                }
+            } catch (IOException e) {
+                showError("Erreur lors de la reception du message");
+            }
+        }
     }
 
-            
+    /**
+	 * Affiche une boîte de dialogue d'erreur avec le message spécifié.
+	 * 
+	 * @param message Le message d'erreur à afficher.
+	 */
     private void showError(String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(AlertType.ERROR);
@@ -274,6 +295,62 @@ public class InterfaceControleur extends ClientRobi{
             alert.showAndWait();
         });
     }
+    public void TreeConstructEnvironnement(ArrayList<EnvironnementJSONFormat> environnement){
+        if(environnement!=null) {
+            TreeItem<String> rootItem = new TreeItem<>("Root");
+            for (EnvironnementJSONFormat env : environnement) {
+                TreeItem<String> newItem = new TreeItem<>(env.getName());
+                rootItem.getChildren().add(newItem);
+                TreeAddChildrenEnvironnement(env, newItem);
+            }
+            Platform.runLater(() -> {
+                treeenvironement.setRoot(rootItem);
+                treeenvironement.getRoot().setExpanded(true);
+            });
+        }
+    }
+
+    public final void TreeAddChildrenEnvironnement(EnvironnementJSONFormat environement, TreeItem<String> Item){
+        for(EnvironnementJSONFormat env :environement.getChildren()){
+            TreeItem<String> newItem = new TreeItem<>(env.getName());
+            Item.getChildren().add(newItem);
+            TreeAddChildrenEnvironnement(env,newItem);
+        }
+    }
+
+
+
+    TreeItem<String> rootItem = new TreeItem<>("Root");
+
+    public void TreeConstructSNodes(SNodeJSONFormat sNodeJSONFormat){
+        if(sNodeJSONFormat!=null) {
+            TreeItem<String> newItem = new TreeItem<>(sNodeJSONFormat.getCommandeChildren());
+            rootItem.getChildren().add(newItem);
+            TreeAddChildrenSNodes(sNodeJSONFormat,newItem);
+            Platform.runLater(() -> {
+                //rootItem.getChildren().clear();
+                treesnode.setRoot(rootItem);
+                treesnode.getRoot().setExpanded(true);
+            });
+        }
+    }
+
+    public final void TreeAddChildrenSNodes(SNodeJSONFormat sNodeJSONFormat, TreeItem<String> Item){
+        if(!sNodeJSONFormat.getChildren().isEmpty()) {
+            int a = 1;
+            for (SNodeJSONFormat sNodeJSONFormat2 : sNodeJSONFormat.getChildren()) {
+                if (Objects.equals(sNodeJSONFormat2.getCommandname(), "null")) {
+                    TreeItem<String> newItem2 = new TreeItem<>("\""+(a++) + "\" " + sNodeJSONFormat2.getCommandeChildren());
+                    Item.getChildren().add(newItem2);
+                    TreeAddChildrenSNodes(sNodeJSONFormat2,newItem2);
+                }
+            }
+        }
+    }
+
+    /**
+	 * Arrête le thread et la connexion.
+	 */
     public final void stopThreadAndConnection() {
             try {
                 super.stopSocket();
@@ -283,10 +360,11 @@ public class InterfaceControleur extends ClientRobi{
                 showError("Erreur lors de la fermeture de la connexion");
             }
     }
-
+    
+	/**
+	 * Initialise le contrôleur.
+	 */
     public final void initialize() {
         areaCommand.setEditable(false);
-        areaEnvironment.setEditable(false);
-        areaSNode.setEditable(false);
     }
 }

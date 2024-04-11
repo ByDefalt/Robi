@@ -1,7 +1,9 @@
 package defalt.robiproject.algo;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import defalt.robiproject.graphicLayer.*;
+import defalt.robiproject.parser.SDefaultNode;
 import defalt.robiproject.parser.SNode;
 import defalt.robiproject.parser.SParser;
 import defalt.robiproject.socket.Server;
@@ -14,10 +16,17 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.Base64;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
 
+/**
+ * Cette classe représente le serveur pour la communication avec l'application Robi.
+ *
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
 public class ServerRobi extends Server {
 
     private Thread myThread;
@@ -25,39 +34,23 @@ public class ServerRobi extends Server {
     private Socket clientSocket;
     private String code;
 
-    private SParser<SNode> parser = new SParser<>();
+    private final SParser<SNode> parser = new SParser<>();
     private List<SNode> compiled;
-    private GSpace space;
-    private Environment environment = new Environment();
+    private final GSpace space;
+    private final Environment environment = new Environment();
     private Iterator<SNode> itor;
-    private int position=0;
+    private Integer position=-1;
 
-    public final boolean isConnected() {
-        return connection;
-    }
+    private final EnvironnementJSONFormat spacejson;
 
-    public final void setConnection(boolean connection) {
-        this.connection = connection;
-    }
+    private final List<EnvironnementJSONFormat> listenv=new ArrayList<>();
 
-    public final Thread getMyThread() {
-        return myThread;
-    }
-
-    public final void setMyThread(Thread myThread) {
-        this.myThread = myThread;
-    }
-    public final Socket getClientSocket() {
-        return clientSocket;
-    }
-
-    public final void setClientSocket(Socket clientSocket) {
-        this.clientSocket = clientSocket;
-    }
-
+    /**
+     * Initialise le serveur Robi.
+     */
     public ServerRobi(){
         space = new GSpace("Exercice 5", new Dimension(800, 500));
-        //space.open();
+
         Reference spaceRef = new Reference(space);
         Reference rectClassRef = new Reference(GRect.class);
         Reference ovalClassRef = new Reference(GOval.class);
@@ -83,156 +76,208 @@ public class ServerRobi extends Server {
         environment.addReference("oval.class", ovalClassRef);
         environment.addReference("image.class", imageClassRef);
         environment.addReference("label.class", stringClassRef);
+        spacejson=new EnvironnementJSONFormat("space");
+        listenv.add(spacejson);
+        listenv.add(new EnvironnementJSONFormat("rect.class"));
+        listenv.add(new EnvironnementJSONFormat("oval.class"));
+        listenv.add(new EnvironnementJSONFormat("image.class"));
+        listenv.add(new EnvironnementJSONFormat("label.class"));
     }
+
+    /**
+     * Vérifie si le serveur est connecté.
+     * @return Vrai si le serveur est connecté, sinon faux.
+     */
+    public final boolean isConnected() {
+        return connection;
+    }
+
+    /**
+     * Définit l'état de connexion du serveur.
+     * @param connection Vrai pour indiquer que le serveur est connecté, sinon faux.
+     */
+    public final void setConnection(boolean connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * Obtient le thread du serveur.
+     * @return Le thread du serveur.
+     */
+    public final Thread getMyThread() {
+        return myThread;
+    }
+
+    /**
+     * Définit le thread du serveur.
+     * @param myThread Le thread du serveur.
+     */
+    public final void setMyThread(Thread myThread) {
+        this.myThread = myThread;
+    }
+
+    /**
+     * Obtient le socket client.
+     * @return Le socket client.
+     */
+    public final Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    /**
+     * Définit le socket client.
+     * @param clientSocket Le socket client.
+     */
+    public final void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
+
+    /**
+     * Méthode principale pour recevoir les messages.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
     @Override
     public final void receiveMessage() throws IOException {
         while(true){
             if(this.clientSocket.isClosed()){
                 this.setClientSocket(this.accept());
             }
-                try {
-                        Object recv = getIn().readObject();
-                        if (recv != null) {
-                            if (recv instanceof String) {
-                                // Créer l'instance Gson en utilisant un GsonBuilder
-                                Gson gson = new GsonBuilder()
-                                        .registerTypeAdapter(CommandeSocket.class, new CommandeSocketTypeAdapter()) // Enregistrer l'adaptateur de type
-                                        .create();
-
-                                // Désérialiser le JSON en un objet CommandeSocket en utilisant Gson avec l'adaptateur de type personnalisé
-                                CommandeSocket commande = gson.fromJson((String) recv, CommandeSocket.class);
-                                String base64Image = null;
-                                Graphics2D g2d=null;
-                                BufferedImage image =null;
-                                switch (commande.getName()) {
-                                    case "envoyer":
-                                        code = commande.getCode();
-                                        compiled = parser.parse(code);
-                                        break;
-                                    case "executer_pas":
-                                        itor = compiled.iterator();
-                                        if (itor.hasNext()) {
-                                            Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                            position = 1;
-                                            super.sendMessage(position);
-                                            super.sendMessage(reponse);
-                                        }
-                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                        g2d = image.createGraphics();
-                                        space.paint(g2d);
-                                        g2d.dispose();
-                                        base64Image = null;
-                                        try {
-                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                            ImageIO.write(image, "png", baos);
-                                            byte[] imageBytes = baos.toByteArray();
-                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                            super.sendMessage(base64Image);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case "executer_block":
-                                        itor = compiled.iterator();
-                                        while (itor.hasNext()) {
-                                            Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                            super.sendMessage(reponse);
-                                        }
-                                        image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                        g2d = image.createGraphics();
-                                        space.paint(g2d);
-                                        g2d.dispose();
-                                        base64Image = null;
-                                        try {
-                                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                            ImageIO.write(image, "png", baos);
-                                            byte[] imageBytes = baos.toByteArray();
-                                            base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                            super.sendMessage(base64Image);
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-                                        break;
-                                    case "precedent":
-                                        if (position > 1) {
-                                            space.clear();
-                                            space.changeWindowSize(new Dimension(800, 500));
-                                            itor = compiled.iterator();
-                                            position--;
-                                            for (int i = 1; i <= position; i++) {
-                                                if (itor.hasNext()) {
-                                                    Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                                    super.sendMessage(position);
-                                                    super.sendMessage(reponse);
-                                                }
-                                            }
-                                            image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                            g2d = image.createGraphics();
-                                            space.paint(g2d);
-                                            g2d.dispose();
-                                            base64Image = null;
-                                            try {
-                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                                ImageIO.write(image, "png", baos);
-                                                byte[] imageBytes = baos.toByteArray();
-                                                base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                                super.sendMessage(base64Image);
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                        break;
-                                    case "suivant":
-                                        if(position!=0) {
-                                            if (itor.hasNext()) {
-                                                Reponse reponse = new Interpreter().compute(environment, itor.next());
-                                                position++;
-                                                super.sendMessage(position);
-                                                super.sendMessage(reponse);
-                                            }
-                                            image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                                            g2d = image.createGraphics();
-                                            space.paint(g2d);
-                                            g2d.dispose();
-                                            base64Image = null;
-                                            try {
-                                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                                ImageIO.write(image, "png", baos);
-                                                byte[] imageBytes = baos.toByteArray();
-                                                base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                                super.sendMessage(base64Image);
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                        break;
-                                    default:
-                                        System.out.println("commande name undefined");
-                                        break;
+            try {
+                Object recv = getIn().readObject();
+                if(recv instanceof String){
+                    CommandeSocket commande=new CommandeSocket("");
+                    CommandeSocket mycommande = commande.Json2Commande((String) recv);
+                    if (mycommande.getName().equals("envoyer")) {
+                        code = (String) mycommande.getObject();
+                        compiled = parser.parse(code);
+                        createAndSendEnvironement();
+                    }else{
+                        switch (mycommande.getName()) {
+                            case "executer_pas":
+                                itor = compiled.iterator();
+                                if (itor.hasNext()) {
+                                    SNode sNode= itor.next();
+                                    new Interpreter().compute(environment, sNode);
+                                    createAndSendSNodes(sNode);
+                                    position = 1;
                                 }
+                                break;
+                            case "executer_block":
+                                itor = compiled.iterator();
+                                while (itor.hasNext()) {
+                                    SNode sNode= itor.next();
+                                    new Interpreter().compute(environment, sNode);
+                                    createAndSendSNodes(sNode);
+                                }
+                                break;
+                            case "precedent":
+                                if (position > 1) {
+                                    space.clear();
+                                    space.changeWindowSize(new Dimension(800, 500));
+                                    itor = compiled.iterator();
+                                    position--;
+                                    for (int i = 1; i <= position; i++) {
+                                        if (itor.hasNext()) {
+                                            SNode sNode= itor.next();
+                                            new Interpreter().compute(environment, sNode);
+                                            createAndSendSNodes(sNode);
+                                        }
+                                    }
+                                }
+                                break;
+                            case "suivant":
+                                if(position!=0) {
+                                    if (itor.hasNext()) {
+                                        SNode sNode= itor.next();
+                                        new Interpreter().compute(environment, sNode);
+                                        createAndSendSNodes(sNode);
+                                        position++;
+                                    }
+                                }
+                                break;
 
-                            }
+                            default:
+                                break;
                         }
-                }catch (EOFException e){
-                    try {
-                        this.clientSocket.close(); // Fermeture de la socket côté serveur
-                    } catch (IOException ex) {
-                        ex.printStackTrace(); // Gérer les erreurs de fermeture de la socket
-                    }
-                }catch(ClassNotFoundException | IOException e) {
-                    e.printStackTrace();
+                        createAndSendPosition();
+                        createAndSendEnvironement();
+                        createAndSendImage();
+                    }}
+            }catch (EOFException e){
+                try {
+                    this.clientSocket.close(); // Fermeture de la socket côté serveur
+                } catch (IOException ex) {
+                    ex.printStackTrace(); // Gérer les erreurs de fermeture de la socket
                 }
+            }catch(ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    public static void main(String[] args) {
-        /*
-        if (args.length == 0) {
-            System.out.println("Usage: java ServerRobi port");
-            return;
+    /**
+     * Crée et envoie une image au client.
+     */
+    public void createAndSendImage(){
+        BufferedImage image = new BufferedImage(space.getWidth(), space.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        space.paint(g2d);
+        g2d.dispose();
+        String base64Image = null;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", baos);
+            byte[] imageBytes = baos.toByteArray();
+            base64Image = Base64.getEncoder().encodeToString(imageBytes);
+            CommandeSocket commande=new CommandeSocket("ImageBase64","String",base64Image);
+            super.sendMessage(commande.Commande2Json());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        */
+    }
+
+    /**
+     * Crée et envoie l'environnement au client.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public void createAndSendEnvironement() throws IOException {
+        for (Map.Entry<String, Reference> m : environment.getVariables().entrySet()) {
+            if(!m.getKey().equals("space") && !m.getKey().equals("rect.class") && !m.getKey().equals("oval.class") && !m.getKey().equals("image.class") && !m.getKey().equals("label.class")){
+                spacejson.add(m.getKey());
+            }
+        }
+        CommandeSocket commande=new CommandeSocket("EnvironementJson","List<EnvironnementJSONFormat>",listenv);
+        super.sendMessage(commande.Commande2Json());
+    }
+
+    /**
+     * Crée et envoie un nœud SNode au client.
+     * @param sNode Le nœud SNode à envoyer.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public void createAndSendSNodes(SNode sNode) throws IOException {
+        SNodeJSONFormat sNodeJSONFormat=new SNodeJSONFormat();
+        sNodeJSONFormat = SNodeJSONFormat.copyFromSDefaultNode(sNode);
+        CommandeSocket commande=new CommandeSocket("SNodeJSON","SNodeJSONFormat",sNodeJSONFormat);
+        super.sendMessage(commande.Commande2Json());
+    }
+
+    /**
+     * Crée et envoie la position au client.
+     * @throws IOException Si une erreur d'entrée/sortie se produit.
+     */
+    public void createAndSendPosition() throws IOException {
+        CommandeSocket commande=new CommandeSocket("Position","Integer",position);
+        super.sendMessage(commande.Commande2Json());
+    }
+
+    /**
+     * Méthode principale du serveur Robi.
+     * @param args Arguments de la ligne de commande.
+     */
+    public static void main(String[] args) {
         ServerRobi serverRobi = new ServerRobi();
+
         try {
             serverRobi.startSocket("localhost", Integer.parseInt("5555"));
             serverRobi.setClientSocket(serverRobi.accept());
@@ -253,7 +298,10 @@ public class ServerRobi extends Server {
         receiveThread.start();
     }
 
-
+    /**
+     * Obtient l'espace graphique du serveur.
+     * @return L'espace graphique.
+     */
     public GSpace getSpace() {
         return space;
     }

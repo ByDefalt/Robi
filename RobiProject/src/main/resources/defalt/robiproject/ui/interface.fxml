@@ -66,7 +66,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.23057644110275685, 0.7067669172932329, 0.5" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.15716829919857522, 0.5011130899376669, 0.8305877114870881" VBox.vgrow="ALWAYS">
          <items>
             <VBox prefHeight="374.0" prefWidth="135.0">
                <children>
@@ -104,7 +104,7 @@
             </VBox>
             <VBox prefHeight="374.0" prefWidth="241.0">
                <children>
-                  <SplitPane dividerPositions="0.39032258064516123" orientation="VERTICAL" prefHeight="378.0" prefWidth="242.0" VBox.vgrow="ALWAYS">
+                  <SplitPane dividerPositions="0.6887096774193548" orientation="VERTICAL" prefHeight="378.0" prefWidth="242.0" VBox.vgrow="ALWAYS">
                      <items>
                         <AnchorPane>
                            <children>
@@ -114,11 +114,7 @@
                               <Button layoutX="113.0" layoutY="59.0" mnemonicParsing="false" onAction="#actionBoutonSuivant" text="Suivant" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                           <children>
-                              <ImageView fx:id="Images" fitHeight="224.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                           </children>
-                        </AnchorPane>
+                        <ImageView fx:id="Images" fitHeight="265.0" fitWidth="288.0" pickOnBounds="true" preserveRatio="true" />
                      </items>
                   </SplitPane>
                </children>
@@ -132,17 +128,17 @@
                               <Label layoutX="2.0" layoutY="5.0" text="Environement :" />
                            </children>
                         </AnchorPane>
-                        <TreeView fx:id="treeenvironement" prefHeight="156.0" prefWidth="187.0" />
+                        <TreeView fx:id="treeenvironement" prefHeight="156.0" prefWidth="187.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="54.0" prefWidth="187.0" VBox.vgrow="NEVER">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="23.0" prefWidth="187.0" VBox.vgrow="NEVER">
                            <children>
                               <Label layoutY="3.0" text="SNode :" />
                            </children>
                         </AnchorPane>
-                        <TextArea fx:id="areaSNode" VBox.vgrow="ALWAYS" />
+                        <TreeView fx:id="treesnode" prefHeight="156.0" prefWidth="187.0" VBox.vgrow="ALWAYS" />
                      </children>
                   </VBox>
               </items>
