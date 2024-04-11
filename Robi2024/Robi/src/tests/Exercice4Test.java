@@ -109,8 +109,6 @@ public class Exercice4Test {
 
         assertEquals(Color.BLACK, space.getBackgroundColor());
     }
-
-    // Add more tests for other commands like sleep, add, del, etc.
     
     @Test
     public void testAddElementCommand() {
@@ -151,11 +149,8 @@ public class Exercice4Test {
         long endTime = System.currentTimeMillis();
         long duration = endTime - startTime;
 
-        // Allow some margin for delay
         assertEquals(1000, duration, 100);
     }
-
-    // Add more tests for other commands like del, translate, etc.
     
     @Test
     public void testTranslateCommand() {
