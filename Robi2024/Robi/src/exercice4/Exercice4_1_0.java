@@ -47,7 +47,7 @@ public class Exercice4_1_0 {
 		environment.addReference("space", spaceRef);
 		environment.addReference("robi", robiRef);
 
-		//this.mainLoop();
+		this.mainLoop();
 	}
 
 	/**

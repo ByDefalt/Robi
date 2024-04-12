@@ -64,6 +64,11 @@ public class Exercice4_2_0 {
 		this.mainLoop();
 	}
 	
+	/**
+	 * Constructeur utilisé par les tests Junit.
+	 * 
+	 * @param script
+	 */
 	public Exercice4_2_0(String script) {
 		this.space = new GSpace("Exercice 4", new Dimension(200, 100));
 		this.environment = new Environment();
@@ -127,6 +132,11 @@ public class Exercice4_2_0 {
 		}
 	}
 	
+	/**
+	 * Exécute une liste de commandes en une seule fois.
+	 * 
+	 * @param script contient les commandes.
+	 */
 	public void oneShot(String script) {
         SParser<SNode> parser = new SParser<>();
         List<SNode> compiled;

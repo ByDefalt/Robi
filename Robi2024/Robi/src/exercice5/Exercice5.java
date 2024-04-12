@@ -44,6 +44,17 @@ import stree.parser.SParser;
 (space.robi add im (image.class new alien.gif))
 (space.robi.im translate 20 20))
 */
+
+/**
+ * Classe principale pour l'exercice 5. Cette classe permet de créer un
+ * espace graphique et d'interpréter une série de commandes définies dans une
+ * s-expression.
+ * 
+ * @author LE BRAS Erwan
+ * @author ROUSVAL Romain
+ * @author NICOLAS Pierre
+ * @author KERVRAN Maxime
+ */
 public class Exercice5 {
 	public Environment environment = new Environment();
 	String script = "(space setDim 150 120)\n" +
@@ -68,6 +79,9 @@ public class Exercice5 {
 			+ "(space del robi)";
 
 
+	/**
+	 * Constructeur de la classe Exercice5.
+	 */
     public Exercice5() {
     	GSpace space = new GSpace("Exercice 5", new Dimension(800, 500));
 		space.open();
@@ -98,7 +112,12 @@ public class Exercice5 {
 		environment.addReference("image.class", imageClassRef);
 		environment.addReference("label.class", stringClassRef);
     }
-
+    
+    /**
+	 * Exécute une liste de commandes en une seule fois.
+	 * 
+	 * @param script contient les commandes.
+	 */
     public void oneShot(String script) {
         SParser<SNode> parser = new SParser<>();
         List<SNode> compiled;
@@ -113,6 +132,11 @@ public class Exercice5 {
         }
     }
     
+    /**
+	 * Méthode principale, point d'entrée de l'application.
+	 * 
+	 * @param args Arguments de la ligne de commande (non utilisés).
+	 */
     public static void main(String[] args) {
         Exercice5 exo = new Exercice5();
         exo.oneShot(exo.script);

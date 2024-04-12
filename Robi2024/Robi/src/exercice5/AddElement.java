@@ -16,6 +16,13 @@ public class AddElement implements Command {
         this.environment = environment;
     }
 
+    /**
+	 * Exécute la commande pour ajouter un élément graphique à l'espace graphique.
+	 * 
+	 * @param receiver Le récepteur de la commande.
+	 * @param method   La méthode à exécuter.
+	 * @return Le récepteur de la commande.
+	 */
     public Reference run(Reference receiver, SNode method) {
         if (receiver == null || receiver.getReceiver() == null) {
             return null;
@@ -26,8 +33,9 @@ public class AddElement implements Command {
         if (container == null) {
             return null;
         }
-
+        
         String elementName = method.get(2).contents();
+        //concatenation du nom du/des père de l'element qui va être ajouté
         String containerNameAll = method.get(0).contents() + "." + elementName;
         String elementType = method.get(3).get(0).contents();
 
@@ -50,6 +58,12 @@ public class AddElement implements Command {
         return null;
     }
 
+    /**
+	 * Méthode pour obtenir la référence de l'element.
+	 * 
+	 * @param elementType Le type de l'élément.
+	 * @return La référence de la classe d'élément.
+	 */
     private Reference getRefererenceClass(String elementType) {
         if(elementType.equals("Rect")) {
             return this.environment.getReferenceByName("rect.class");
@@ -63,6 +77,13 @@ public class AddElement implements Command {
         return this.environment.getReferenceByName(elementType);
     }
 
+    /**
+	 * Méthode pour obtenir la commande de création d'un nouvel élément.
+	 * 
+	 * @param refElementClass La référence de la classe d'élément.
+	 * @param elementType     Le type de l'élément.
+	 * @return La commande de création d'un nouvel élément.
+	 */
     private Command getNewElementCommand(Reference refElementClass, String elementType) {
         if(elementType.equals("Rect") || elementType.equals("rect.class") || elementType.equals("Oval") || elementType.equals("oval.class")) {
             return (NewElement) refElementClass.getCommandByName("new");
