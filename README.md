@@ -15,7 +15,7 @@ Robi est composé de deux parties, la première est une série d'exercices sur l
 
 ## Éléments Techniques
 <a id="elementsTechniques" class="anchor"></a>
-
+Nous avons choisis de crée des class spéciale pour le format Json elle porte le nom JSONFormat.
 ## Bilan
 <a id="bilan" class="anchor"></a>
 Dans l'interpréteur un oubli a été fait, lors de la suppression d'un élément ses enfants ne sont pas supprimés, visuellement l'élément et ses enfants sont bien supprimés mais environnement contient toujours les references des enfants.
