@@ -20,7 +20,7 @@ Nous avons choisi de créé des class spéciales pour le format Json elle porte 
 <a id="bilan" class="anchor"></a>
 Dans l'interpréteur un oubli a été fait, lors de la suppression d'un élément ses enfants ne sont pas supprimés, visuellement l'élément et ses enfants sont bien supprimés mais environnement contient toujours les references des enfants.
 L'exercice 6 de la partie 1 et le point 5 de la partie 2 n'ont pas été fait pas manque de temps.
-<br>Nous avons choisi de créer une class pour faire toute les échanges de socket avec un nom, un type, un objet afin de faciliter la gestion des sockets et des objets echangés entre le client et le server.
+<br>Nous avons choisi de créer une class pour faire tout les échanges de socket avec un nom, un type, un objet afin de faciliter la gestion des sockets et des objets echangés entre le client et le server.
 ## Auteurs
 <a id="auteurs" class="anchor"></a>
 - ROUSVAL Romain
