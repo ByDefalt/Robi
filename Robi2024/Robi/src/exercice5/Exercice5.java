@@ -112,6 +112,7 @@ public class Exercice5 {
             e.printStackTrace();
         }
     }
+    
     public static void main(String[] args) {
         Exercice5 exo = new Exercice5();
         exo.oneShot(exo.script);

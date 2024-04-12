@@ -14,5 +14,9 @@ public class GOval extends GBounded {
 		this.drawContents(g);
 		g.setColor(c);
 	}
+	
+	public Color getColor() {
+		return super.color;
+	}
 
 }

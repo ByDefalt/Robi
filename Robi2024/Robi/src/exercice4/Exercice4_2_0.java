@@ -26,16 +26,17 @@ import tools.Tools;
  */
 public class Exercice4_2_0 {
 	// Une seule variable d'instance
-	public Environment environment = new Environment();
+	private Environment environment;
+	private GSpace space;
 
 	/**
 	 * Constructeur de la classe Exercice4_2_0.
 	 */
 	public Exercice4_2_0() {
-		GSpace space = new GSpace("Exercice 4", new Dimension(200, 100));
-		space.open();
+		this.space = new GSpace("Exercice 4", new Dimension(200, 100));
+		this.environment = new Environment();
 
-		Reference spaceRef = new Reference(space);
+		Reference spaceRef = new Reference(this.space);
 		Reference rectClassRef = new Reference(GRect.class);
 		Reference ovalClassRef = new Reference(GOval.class);
 		Reference imageClassRef = new Reference(GImage.class);
@@ -45,21 +46,62 @@ public class Exercice4_2_0 {
 		spaceRef.addCommand("setDim", new SetDim());
 		spaceRef.addCommand("sleep", new SleepCommand());
 
-		spaceRef.addCommand("add", new AddElement(environment));
-		spaceRef.addCommand("del", new DelElement(environment));
+		spaceRef.addCommand("add", new AddElement(this.environment));
+		spaceRef.addCommand("del", new DelElement(this.environment));
 
 		rectClassRef.addCommand("new", new NewElement());
 		ovalClassRef.addCommand("new", new NewElement());
 		imageClassRef.addCommand("new", new NewImage());
 		stringClassRef.addCommand("new", new NewString());
 
-		environment.addReference("space", spaceRef);
-		environment.addReference("rect.class", rectClassRef);
-		environment.addReference("oval.class", ovalClassRef);
-		environment.addReference("image.class", imageClassRef);
-		environment.addReference("label.class", stringClassRef);
-
+		this.environment.addReference("space", spaceRef);
+		this.environment.addReference("rect.class", rectClassRef);
+		this.environment.addReference("oval.class", ovalClassRef);
+		this.environment.addReference("image.class", imageClassRef);
+		this.environment.addReference("label.class", stringClassRef);
+		this.space.open();
+		
 		this.mainLoop();
+	}
+	
+	public Exercice4_2_0(String script) {
+		this.space = new GSpace("Exercice 4", new Dimension(200, 100));
+		this.environment = new Environment();
+
+		Reference spaceRef = new Reference(this.space);
+		Reference rectClassRef = new Reference(GRect.class);
+		Reference ovalClassRef = new Reference(GOval.class);
+		Reference imageClassRef = new Reference(GImage.class);
+		Reference stringClassRef = new Reference(GString.class);
+
+		spaceRef.addCommand("setColor", new SetColor());
+		spaceRef.addCommand("setDim", new SetDim());
+		spaceRef.addCommand("sleep", new SleepCommand());
+
+		spaceRef.addCommand("add", new AddElement(this.environment));
+		spaceRef.addCommand("del", new DelElement(this.environment));
+
+		rectClassRef.addCommand("new", new NewElement());
+		ovalClassRef.addCommand("new", new NewElement());
+		imageClassRef.addCommand("new", new NewImage());
+		stringClassRef.addCommand("new", new NewString());
+
+		this.environment.addReference("space", spaceRef);
+		this.environment.addReference("rect.class", rectClassRef);
+		this.environment.addReference("oval.class", ovalClassRef);
+		this.environment.addReference("image.class", imageClassRef);
+		this.environment.addReference("label.class", stringClassRef);
+		this.space.open();
+		
+		this.oneShot(script);
+	}
+	
+	public Environment getEnvironment() {
+		return this.environment;
+	}
+	
+	public GSpace getSpace() {
+		return this.space;
 	}
 
 	/**
@@ -80,10 +122,24 @@ public class Exercice4_2_0 {
 			}
 			Iterator<SNode> itor = compiled.iterator();
 			while (itor.hasNext()) {
-				new Interpreter().compute(environment, itor.next());
+				new Interpreter().compute(this.environment, itor.next());
 			}
 		}
 	}
+	
+	public void oneShot(String script) {
+        SParser<SNode> parser = new SParser<>();
+        List<SNode> compiled;
+        try {
+            compiled = parser.parse(script);
+            Iterator<SNode> itor = compiled.iterator();
+            while (itor.hasNext()) {
+                new Interpreter().compute(this.environment, itor.next());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 	/**
 	 * Méthode principale, point d'entrée de l'application.

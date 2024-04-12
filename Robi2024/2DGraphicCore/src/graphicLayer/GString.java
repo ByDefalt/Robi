@@ -51,4 +51,8 @@ public class GString extends GBounded {
 		int adv = metrics.stringWidth(str);
 		return new Dimension(adv, hgt);
 	}
+	
+	public Color getColor() {
+		return super.color;
+	}
 }
