@@ -13,9 +13,74 @@ Robi est composé de deux parties, la première est une série d'exercices sur l
     Tous les échanges entre le client et le serveur se font en json.
     À chaque exécution l'environnement affiché sous forme d'arbres dans l'ihm est mis à jour tout comme les snodes.
 
+
+
+## Exemples
+
+<img src="markdown_doc/screen1.png" alt="image de l'aplication" width="700"/>
+
+<img src="markdown_doc/screen2.png" alt="image de l'aplication" width="700"/>
+
 ## Éléments Techniques
 <a id="elementsTechniques" class="anchor"></a>
 Nous avons choisi de créé des class spéciales pour le format Json elle porte le nom JSONFormat. De plus ont à créé des class Adapter qui gère la serialization/deserilization Json des class JSONFormat.
+
+## Acquis
+
+- **Création de socket**
+
+     ```java
+    /**
+	 * Lance la connexion avec le serveur en initialisant le socket, le flux
+	 * d'entrée et le flux de sortie.
+	 * 
+	 * @param serverAddress l'adresse IP du serveur
+	 * @param port          le port de connexion du serveur
+	 * @throws IOException si une erreur d'entrée/sortie survient lors de la
+	 *                     création du socket ou des flux
+	 */
+	@Override
+	public void startSocket(String serverAddress, int port) throws IOException {
+		socket = new Socket(serverAddress, port);
+		in = new ObjectInputStream(socket.getInputStream());
+		out = new ObjectOutputStream(socket.getOutputStream());
+	}
+     ```
+
+- **Gestion de Thread**
+
+     ```java
+    /**
+     * Méthode exécutée lorsqu'un utilisateur clique sur le bouton de connexion.
+     * Cette méthode vérifie si les champs d'entrée pour l'adresse IP et le port ne sont pas vides.
+     * Si les champs ne sont pas vides, elle tente d'établir une connexion en utilisant les informations fournies.
+     * Si la connexion réussit, elle lance un thread pour recevoir les messages entrants.
+     * Elle met à jour l'état de la connexion et affiche "Connecté" dans le label correspondant.
+     * En cas d'erreur lors de la connexion, elle affiche "erreur de connexion" dans le label.
+     * Si le port spécifié n'est pas un entier valide, elle affiche "port non valide".
+     * Si l'un des champs d'entrée est vide, elle affiche "entrée non valide".
+     */
+    @FXML
+    private void actionBoutonConnexion() {
+        if(entreeIp.getText()!=null && !entreeIp.getText().isEmpty() && entreePort.getText()!=null && !entreePort.getText().isEmpty()){
+            try {
+                super.startSocket(entreeIp.getText(),Integer.parseInt(entreePort.getText()));
+                Thread receiveThread=new Thread(this::receiveMessage);
+                myThread=receiveThread;
+                IsConnected=true;
+                receiveThread.start();
+                labelEtatConnexion.setText("Connecté");
+            } catch (IOException e) {
+                labelEtatConnexion.setText("erreur de connexion");
+            } catch (NumberFormatException e) {
+                showError("port non valide");
+            }
+        }else{
+            showError("entree non valide");
+        }
+    }
+     ```
+     
 ## Bilan
 <a id="bilan" class="anchor"></a>
 Dans l'interpréteur un oubli a été fait, lors de la suppression d'un élément ses enfants ne sont pas supprimés, visuellement l'élément et ses enfants sont bien supprimés mais environnement contient toujours les references des enfants.
